@@ -10,16 +10,44 @@ const stores = await res.json();
 	<main>
 		<div class="main-visual">
 			<div class="main-visual__stage">
-				<div class="main-visual__stage-inner">
-					<div class="container">
+				<div class="container">
+					<div class="main-visual__flug">
+						<img src="/assets/images/flug-left.png" class="main-visual__flugLeftImage" alt="" width="981" height="416">
+						<img src="/assets/images/flug-right.png" class="main-visual__flugRightImage" alt="" width="981" height="416">
+					</div>
+					<h1 class="main-visual__logo">
+						<img src="/assets/images/logo.svg" class="main-visual__logoImage" alt="日本酒ゴーアラウンド" width="300" height="74">
+					</h1>
+					<div class="main-visual__cakeBase">
 						<img src="/assets/images/base.png" alt="" width="1830" height="775">
+					</div>
+					<div class="main-visual__sake">
+						<div class="main-visual__sakeRibbon">
+							<img src="/assets/images/nihonshunohi.png" class="main-visual__sakeRibbonImage" alt="10月1日は日本酒の日" width="1225" height="393">
+							<img src="/assets/images/sakazukin-kanazawa.png" class="main-visual__sakeKanazawaImage" alt="さかずきん 金沢" width="390" height="443">
+						</div>
+						<img src="/assets/images/sake.png" class="main-visual__sakeImage" alt="" width="623" height="1920">
+					</div>
+					<div class="main-visual__tower">
+						<img src="/assets/images/main-tower.png" class="main-visual__towerImage" alt="" width="1003" height="1664">
+					</div>
+					<div class="main-visual__sakazukinBottom">
+						<img src="/assets/images/sakazukin-okinawa.png" class="main-visual__sakazukinBottomImage" alt="さかずきん 沖縄" width="661" height="883">
+						<img src="/assets/images/sakazukin-okayama.png" class="main-visual__sakazukinBottomImage" alt="さかずきん 岡山" width="625" height="909">
+						<img src="/assets/images/sakazukin-shizuoka.png" class="main-visual__sakazukinBottomImage" alt="さかずきん 静岡" width="765" height="594">
+						<img src="/assets/images/sakazukin-himeji.png" class="main-visual__sakazukinBottomImage" alt="さかずきん 姫路" width="618" height="681">
+						<img src="/assets/images/sakazukin-izumo.png" class="main-visual__sakazukinBottomImage" alt="さかずきん 出雲" width="519" height="697">
+						<img src="/assets/images/sakazukin-kyoto.png" class="main-visual__sakazukinBottomImage" alt="さかずきん 京都" width="610" height="795">
 					</div>
 				</div>
 			</div>
 			<div class="main-visual__bg bg1"></div>
 			<div class="main-visual__bg bg2"></div>
-			<div class="main-visual__line-start"></div>
-			<div class="main-visual__line-end"></div>
+			<div class="main-visual__lineStart"></div>
+			<div class="main-visual__lineEnd"></div>
+			<h2 class="main-visual__date">
+				<img src="/assets/images/date.png" class="main-visual__dateImage" alt="2023年10月１日（日）" width="1795" height="175">
+			</h2>
 		</div>
 		<section>
 			<div class="container">
@@ -42,12 +70,23 @@ const stores = await res.json();
 
 	// gsap.registerPlugin(ScrollTrigger);
 	gsap.timeline({ repeat: 0, repeatDelay: 0.5 })
-	.to(".main-visual__bg", { scale: 1, duration: .5, ease: "Power1.easeOut" }).to(".main-visual__bg", { borderRadius: 0})
-	.to(".main-visual__line-start", { x: 0, duration: .5 }, "-=0.9")
-	.to(".main-visual__line-end", { x: 0, duration: .5 }, "-=0.9")
+	.to(".main-visual__bg", { scale: 1, duration: .5, ease: "Power1.easeOut", delay: .3 }).to(".main-visual__bg", { borderRadius: 0})
+	.to(".main-visual__lineStart", { x: 0, duration: .5 }, "-=0.9")
+	.to(".main-visual__lineEnd", { x: 0, duration: .5 }, "-=0.9")
 	.to(".main-visual__stage", { opacity: 1, duration: 0 })
 		.to(".main-visual__bg.bg1", {x: '-100%', duration: 2, ease: "Power4.easeOut"})
-		.to(".main-visual__bg.bg2", {x: '100%', duration: 2, ease: "Power4.easeOut"}, "-=2");
+		.to(".main-visual__bg.bg2", {x: '100%', duration: 2, ease: "Power4.easeOut"}, "-=2")
+		.to(".main-visual__flugLeftImage", {opacity: 1, duration: .5, ease: "Power1.easeOut", x: '0%'}, "-=1.3")
+		.to(".main-visual__flugRightImage", {x: 0, opacity: 1, duration: .5, ease: "Power1.easeOut"}, "-=1.1")
+		.to(".main-visual__sake", {x: 0, y: 0, opacity: 1, duration: .5, ease: "Power1.easeOut"}, "-=1.5")
+		.to(".main-visual__tower", {x: 0, y: 0, opacity: 1, duration: .5, ease: "Bounce.easeOut"}, "-=1.1")
+		.to(".main-visual__sakazukinBottomImage:nth-of-type(5)",{y: 0, opacity: 1, scale: 1, duration: .7, ease: "back.out(1.7)"}, "-=1.5")
+		.to(".main-visual__sakazukinBottomImage:nth-of-type(3)",{y: 0, opacity: 1, scale: 1, duration: .7, ease: "back.out(1.7)"}, "-=1.0")
+		.to(".main-visual__sakazukinBottomImage:nth-of-type(4)",{y: 0, opacity: 1, scale: 1, duration: .7, ease: "back.out(1.7)"}, "-=0.9")
+		.to(".main-visual__sakazukinBottomImage:nth-of-type(1)",{y: 0, opacity: 1, scale: 1, duration: .7, ease: "back.out(1.7)"}, "-=0.7")
+		.to(".main-visual__sakazukinBottomImage:nth-of-type(6)",{y: 0, opacity: 1, scale: 1, duration: .7, ease: "back.out(1.7)"}, "-=0.5")
+		.to(".main-visual__sakazukinBottomImage:nth-of-type(2)",{y: 0, opacity: 1, scale: 1, duration: .7, ease: "back.out(1.7)"}, "-=0.5")
+		.to(".main-visual__date",{y: 0, opacity: 1, duration: .7}, "-=0.5");
 </script>
 <style lang="scss">
 	main {
@@ -90,9 +129,14 @@ const stores = await res.json();
 		background-size: 200px 200px;
 		background-position: 0 0, 100px 100px;
 		opacity: 0;
+		&>.container {
+			container: layout / inline-size;
+			position: relative;
+			height: 100%;
+		}
 	}
-	.main-visual__line-start,
-	.main-visual__line-end {
+	.main-visual__lineStart,
+	.main-visual__lineEnd {
 		position: absolute;
 		left: 0;
 		right: 0;
@@ -100,11 +144,11 @@ const stores = await res.json();
 		max-height: 50px;
 		background-image: repeating-linear-gradient(45deg, white, white 15px, #D2E7DB 15px, #D2E7DB 30px, white 30px, white 45px, #F6DFE2 45px, #F6DFE2 60px);
 	}
-	.main-visual__line-start {
+	.main-visual__lineStart {
 		top: 0;
 		translate: 100%
 	}
-	.main-visual__line-end {
+	.main-visual__lineEnd {
 		bottom: 0;
 		translate: -100%;
 	}
@@ -120,5 +164,227 @@ const stores = await res.json();
 		color: inherit;
 		text-decoration: none;
 		pointer-events: none;
+	}
+	.main-visual__date {
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		max-width: 1240px;
+		margin: 0 auto 3px;
+		padding-inline: var(--space-x5);
+		transform: translateY(150%);
+	}
+	.main-visual__dateImage {
+		max-width: 800px;
+		margin-inline: auto;
+	}
+
+	// メインビジュアルステージ内
+	.main-visual__flug {
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: 0;
+		display: flex;
+		justify-content: space-between;
+	}
+	.main-visual__flugLeftImage {
+		width: 45%;
+		translate: -49%;
+		opacity: 0;
+	}
+	.main-visual__flugRightImage {
+		width: 45%;
+		translate: 50%;
+		opacity: 0;
+	}
+	.main-visual__logo {
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: min(6%, 60px);
+		margin: 0;
+		z-index: 10;
+		@media (min-width: 840px) {
+			top: 25%;
+		}
+		@media (min-width: 1160px) {
+			top: 16%;
+		}
+	}
+	.main-visual__logoImage {
+		margin-inline: auto;
+		min-width: 50%;
+	}
+	.main-visual__cakeBase {
+		position: absolute;
+		left: 0;
+		bottom: 0;
+		translate: 0 30%;
+	}
+	.main-visual__sake {
+		position: absolute;
+		display: flex;
+		justify-content: center;
+		height: 100%;
+		max-height: 120vw;
+		left: 15%;
+		bottom: calc(775 / 1830 * 100cqw / 2);
+		transform: translate(-50%, -50%);
+		opacity: 0;
+		rotate: -5deg;
+		transform-origin: center bottom;
+		@media (min-width: 1040px) {
+			rotate: -10deg;
+		}
+	}
+	.main-visual__sakeImage {
+		width: auto;
+		height: 100%;
+	}
+	.main-visual__tower {
+		position: absolute;
+		height: calc(100% - (775 / 1830 * 100cqw / 2));
+		max-height: 130vw;
+		right: 10%;
+		bottom: calc(775 / 1830 * 100cqw / 2);
+		transform: translate(50%, -50%);
+		opacity: 0;
+		rotate: 10deg;
+		transform-origin: center bottom;
+	}
+	.main-visual__towerImage {
+		width: auto;
+		height: 100%;
+	}
+	.main-visual__sakeRibbon {
+		position: absolute;
+		top: 33%;
+		width: 210%;
+		z-index: 1;
+	}
+	.main-visual__sakeRibbonImage {
+		position: relative;
+		z-index: 1;
+	}
+	.main-visual__sakeKanazawaImage {
+		width: 30%;
+		margin-inline: auto;
+		transform-origin: center top;
+		translate: -4% -29%;
+		animation: swing 3s ease-in-out alternate infinite;
+	}
+	@keyframes swing {
+		0% {rotate: -2deg}
+		100% {rotate: 10deg}
+	}
+	.main-visual__sakazukinBottom {
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: min(6%, 60px);
+		display: grid;
+		grid-template-columns: .661fr .625fr .765fr .618fr .519fr .610fr;
+		align-items: flex-end;
+		padding-inline: var(--space-x5);
+		gap: var(--space-x1);
+	}
+	.main-visual__sakazukinBottomImage {
+		opacity: 0;
+		transform: translateY(50%);
+		scale: 1.2;
+		&:nth-of-type(1) {
+			margin-bottom: 20%;
+			animation: okinawa 13s linear 10s infinite;
+		}
+		&:nth-of-type(2) {
+			margin-bottom: 10%;
+			&:hover {
+				animation: okayama 1s linear;
+			}
+		}
+		&:nth-of-type(3) {
+			animation: shizuoka 10s linear 5s infinite;
+		}
+		&:nth-of-type(4) {
+			animation: himeji 11s linear 7s infinite;
+		}
+		&:nth-of-type(5) {
+			margin-bottom: 10%;
+			animation: izumo 11s linear 8s infinite;
+		}
+		&:nth-of-type(6) {
+			margin-bottom: 20%;
+			&:hover {
+				animation: kyoto .6s ease-in-out;
+			}
+		}
+	}
+
+	@keyframes okinawa {
+		0%   { transform: scale(1.0, 1.0) translate(0%, 0%); }
+		1%  { transform: scale(1.1, 0.9) translate(0%, 5%); }
+		4%  { transform: scale(1.2, 0.8) translate(0%, 15%); }
+		5%  { transform: scale(1.0, 1.0) translate(0%, 0%); }
+		6%  { transform: scale(0.9, 1.2) translate(0%, -100%); }
+		7.5%  { transform: scale(0.9, 1.2) translate(0%, -20%); }
+		8.5%  { transform: scale(1.2, 0.8) translate(0%, 15%); }
+		10% { transform: scale(1.0, 1.0) translate(0%, 0%); }
+		100% { transform: scale(1.0, 1.0) translate(0%, 0%); }
+	}
+
+	@keyframes okayama {
+		0%   { transform: scale(1.0, 1.0) translate(0%, 0%); }
+		5%  { transform: scale(1.1, 0.9) translate(0%, 5%); }
+		20%  { transform: scale(1.2, 0.8) translate(0%, 15%); }
+		25%  { transform: scale(1.0, 1.0) translate(0%, 0%); }
+		30%  { transform: scale(0.9, 1.2) translate(0%, -50%) rotateY(0deg);}
+		50%  { transform: scale(0.9, 1.2) translate(0%, -50%) rotateY(180deg);}
+		60%  { transform: scale(0.9, 1.2) translate(0%, -50%) rotateY(0deg);}
+		75%  { transform: scale(0.9, 1.2) translate(0%, -20%); }
+		85%  { transform: scale(1.2, 0.8) translate(0%, 15%); }
+		100% { transform: scale(1.0, 1.0) translate(0%, 0%); }
+	}
+
+	@keyframes shizuoka {
+		0% {transform: skew(0deg,0deg);}
+		1.5% {transform: skew(1deg, 1deg);}
+		2% {transform: skew(-1deg, -1deg);}
+		2.5% {transform: skew(0deg,0deg);}
+		3% {transform: skew(0deg,0deg);}
+		3.5% {transform: skew(1deg, 1deg);}
+		4% {transform: skew(-1deg, -1deg);}
+		4.5% {transform: skew(0deg,0deg);}
+		5% {transform: skew(0deg,0deg);}
+		5.5% {transform: skew(1deg, 1deg);}
+		6% {transform: skew(-1deg, -1deg);}
+		6.5% {transform: skew(0deg,0deg);}
+		100% {transform: skew(0deg,0deg);}
+	}
+
+	@keyframes himeji {
+		0%   { transform: scale(1.0, 1.0) translate(0%, 0%); }
+		1.5%  { transform: scale(0.9, 0.9) translate(0%, 5%); }
+		3%  { transform: scale(1.3, 0.8) translate(0%, 10%); }
+		5%  { transform: scale(0.8, 1.3) translate(0%, -10%); }
+		7%  { transform: scale(1.1, 0.9) translate(0%, 5%); }
+		10% { transform: scale(1.0, 1.0) translate(0%, 0%); }
+		100% { transform: scale(1.0, 1.0) translate(0%, 0%); }
+	}
+
+	@keyframes izumo {
+		0%   { transform: scale(1.0, 1.0) translate(0%, 0%); }
+		2%  { transform: scale(1.0, 1.06) translate(-5%, -4%) skew(6deg, 0deg); }
+		5%  { transform: scale(1.0, 0.94) translate(5%, 4%) skew(-6deg, 0deg); }
+		6.5%  { transform: scale(1.0, 1.03) translate(2%, -2%) skew(-3deg, 0deg); }
+		8%  { transform: scale(1.0, 0.97) translate(-2%, 2%) skew(3deg, 0deg); }
+		10% { transform: scale(1.0, 1.0) translate(0%, 0%); }
+		100% { transform: scale(1.0, 1.0) translate(0%, 0%); }
+	}
+
+	@keyframes kyoto {
+		0% {transform: rotateY(0deg)}
+		100% {transform: rotateY(360deg)}
 	}
 </style>
