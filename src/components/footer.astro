@@ -1,0 +1,23 @@
+---
+interface Props {
+  title: string;
+  body: string;
+  href: string;
+}
+
+const { href, title, body } = Astro.props;
+---
+<footer class="footer">
+  <div class="container">
+    <div class="copyright">©日本酒卍固め ©日本酒ゴーアラウンド ©SAKAZUKIN</div></div>
+</footer>
+
+<style lang="scss">
+  .footer {
+    padding-block: var(--space-x5);
+  }
+  .copyright {
+    text-align: center;
+    font-size: 12px;
+  }
+</style>
