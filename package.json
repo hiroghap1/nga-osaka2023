@@ -10,9 +10,11 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^2.10.3"
+    "astro": "^2.10.3",
+    "p5": "^1.7.0"
   },
   "devDependencies": {
+    "@types/p5": "^1.6.2",
     "gsap": "^3.12.2",
     "sass": "^1.65.1"
   }

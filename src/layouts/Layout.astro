@@ -12,12 +12,23 @@ const { title } = Astro.props;
 <!DOCTYPE html>
 <html lang="ja">
 	<head>
-		<meta charset="UTF-8" />
-		<meta name="description" content="Astro description">
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.png" />
-		<meta name="generator" content={Astro.generator} />
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width">
+		<link rel="icon" type="image/svg+xml" href="/favicon.png">
 		<title>{title}</title>
+		<meta name="description" content="10月1日日本酒の日に開催される、日本酒を愛する人のためのイベント。今年はなんと85店舗が参加！">
+		<meta name="format-detection" content="telephone=no">
+		<meta name="generator" content={Astro.generator}>
+		<meta name="canonical" content="https://nga-osaka.com">
+		<meta property="og:url" content="https://nga-osaka.com">
+		<meta property="og:type" content="website">
+		<meta property="og:title" content={title}>
+		<meta property="og:description" content="10月1日日本酒の日に開催される、日本酒を愛する人のためのイベント。今年はなんと85店舗が参加！">
+		<meta property="og:site_name" content="日本酒ゴーアラウンド大阪 2023 公式サイト">
+		<meta property="og:image" content="https://nga-osaka.com/assets/images/main-visual.jpg">
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;500&display=swap" rel="stylesheet">
 	</head>
 	<body>
 		<slot />
@@ -26,10 +37,7 @@ const { title } = Astro.props;
 </html>
 <style is:global>
 	:root {
-		--accent: 136, 58, 234;
-		--accent-light: 224, 204, 250;
-		--accent-dark: 49, 10, 101;
-		--accent-gradient: linear-gradient(45deg, rgb(var(--accent)), rgb(var(--accent-light)) 30%, white 60%);
+		--color-accent: #4BA095;
 		--font-color: #333333;
 		--space-x1: 4px;
 		--space-x2: 8px;
@@ -41,7 +49,13 @@ const { title } = Astro.props;
 		--space-x8: 32px;
 		--space-x9: 36px;
 		--space-x10: 40px;
+		--space-x15: 60px;
+		--space-x20: 80px;
 	}
+	*,::before,::after {
+		box-sizing: border-box;
+	}
+
 	html {
 		font-family: system-ui, sans-serif;
 		//background: #13151A;
@@ -49,6 +63,8 @@ const { title } = Astro.props;
 	}
 	body {
 		margin: 0;
+		font-family: 'Noto Sans JP', sans-serif;
+		font-weight: 400;
 	}
 	code {
 		font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
@@ -64,4 +80,14 @@ const { title } = Astro.props;
 		max-width: 100%;
 		height: auto;
 	}
+	 ul {
+		 padding-left: 0;
+		 list-style: none;
+	 }
+	 .section {
+		 padding-block: var(--space-x5);
+	 }
+	 .text-center {
+		 text-align: center;
+	 }
 </style>

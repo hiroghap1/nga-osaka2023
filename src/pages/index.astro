@@ -4,6 +4,7 @@ import Card from '../components/Card.astro';
 
 const res = await fetch(`${import.meta.env.PUBLIC_API_URL}/store?per_page=100&order=asc`);
 const stores = await res.json();
+// console.log(stores);
 ---
 
 <Layout title="日本酒ゴーアラウンド大阪2023 公式サイト">
@@ -11,6 +12,9 @@ const stores = await res.json();
 		<div class="main-visual">
 			<div class="main-visual__stage">
 				<div class="container">
+					<div class="main-visual__effectCircle">
+						<div id="effectCircleElement" class="main-visual__effectCircleElement"></div>
+					</div>
 					<div class="main-visual__flug">
 						<img src="/assets/images/flug-left.png" class="main-visual__flugLeftImage" alt="" width="981" height="416">
 						<img src="/assets/images/flug-right.png" class="main-visual__flugRightImage" alt="" width="981" height="416">
@@ -18,6 +22,14 @@ const stores = await res.json();
 					<h1 class="main-visual__logo">
 						<img src="/assets/images/logo.svg" class="main-visual__logoImage" alt="日本酒ゴーアラウンド" width="300" height="74">
 					</h1>
+					<div class="main-visual__message">
+						<div class="main-visual__message1">
+							<img src="/assets/images/message1.png" class="main-visual__messageImage1" alt="" width="1799" height="131">
+						</div>
+						<div class="main-visual__message2">
+							<img src="/assets/images/message2.png" class="main-visual__messageImage2" alt="" width="1178" height="129">
+						</div>
+					</div>
 					<div class="main-visual__cakeBase">
 						<img src="/assets/images/base.png" alt="" width="1830" height="775">
 					</div>
@@ -31,6 +43,7 @@ const stores = await res.json();
 					<div class="main-visual__tower">
 						<img src="/assets/images/main-tower.png" class="main-visual__towerImage" alt="" width="1003" height="1664">
 					</div>
+					<div id="main-visual-canvas"></div>
 					<div class="main-visual__sakazukinBottom">
 						<img src="/assets/images/sakazukin-okinawa.png" class="main-visual__sakazukinBottomImage" alt="さかずきん 沖縄" width="661" height="883">
 						<img src="/assets/images/sakazukin-okayama.png" class="main-visual__sakazukinBottomImage" alt="さかずきん 岡山" width="625" height="909">
@@ -39,6 +52,9 @@ const stores = await res.json();
 						<img src="/assets/images/sakazukin-izumo.png" class="main-visual__sakazukinBottomImage" alt="さかずきん 出雲" width="519" height="697">
 						<img src="/assets/images/sakazukin-kyoto.png" class="main-visual__sakazukinBottomImage" alt="さかずきん 京都" width="610" height="795">
 					</div>
+				</div>
+				<div class="main-visual__effect">
+					<img src="/assets/images/light.png" id="effectLightImage" class="main-visual__effectLightImage" alt="" width="78" height="89">
 				</div>
 			</div>
 			<div class="main-visual__bg bg1"></div>
@@ -49,13 +65,98 @@ const stores = await res.json();
 				<img src="/assets/images/date.png" class="main-visual__dateImage" alt="2023年10月１日（日）" width="1795" height="175">
 			</h2>
 		</div>
-		<section>
+		<section class="section section-introduction">
+			<div class="introductoin-lead">
+				<h2>さかずきんバッジを<br>
+				500円でGet!!<br>
+				胸につけてはしご酒！</h2>
+				<img src="/assets/images/badge-osaka.png" class="introductoin-lead__image" alt="さかずきん 大阪" width="324" height="324">
+			</div>
+			<div class="introductoin-lead--sub">
+				<h3 class="text-center">バッジは15日発売開始！</h3>
+				<p>
+					今年のバッジは18種類！<br>
+					※数の少ない都市が御座いますので､希望の都市がある方はお急ぎ下さい。
+				</p>
+			</div>
 			<div class="container">
-			<h2>参加店舗一覧</h2>
+				<div class="box-contents">
+					<h3 class="heading-ribbon">
+						<span>ルール</span>
+					</h3>
+					<div class="box-contents__inner">
+						<ul class="rule-list">
+							<li class="rule-item">参加店舗か担当酒販店で事前にさかずきんバッジ（500円）を購入！</li>
+							<li class="rule-item">10月1日は一日中バッジを胸につけて周りの人に【日本酒の日】をさりげなくアピール！</li>
+							<li class="rule-item">参加店舗にてそれぞれ蔵元さんが皆様をお待ちしています。</li>
+							<li class="rule-item">各店お気に入りの酒蔵のお酒（69ml）がサービスになります！各店自慢のお付出しは有料♪</li>
+						</ul>
+					</div>
+					<svg width="100%" height="100%" class="box-contents__border">
+						<rect
+							width="100%"
+							height="100%"
+							fill="none"
+							stroke="gray"
+							stroke-width="3"
+						/>
+					</svg>
+				</div>
+				<div class="box-contents">
+					<h3 class="heading-ribbon">
+						<span>注意事項</span>
+					</h3>
+					<div class="box-contents__inner">
+						<ul class="notes-list">
+							<li class="notes-item">今年のバッジは全国共通で使用出来ます。</li>
+							<li class="notes-item">お酒のサービスは各店舗でお一人様一杯ずつになります。</li>
+							<li class="notes-item">自転車で来られたお客様にはお酒の提供はしません。<br>
+								移動は公共交通機関でお願いします。</li>
+							<li class="notes-item">各店とも通常営業体制と異なる場合があります。<br>
+								また、混み合って来た場合の時間制限にご協力をお願いします。</li>
+							<li class="notes-item">［和らぎ水］の提供が出来ないお店もございます。<br>
+								全ての参加店舗（店内）への飲料水の持ち込みは可能です。</li>
+							<li class="notes-item">行政の要請、悪天候等の理由でイベントが中止になった場合もバッジの払い戻しは致しませんが、後日同様のサービスが受けられる様にしますので、バッジは無くさずお持ち下さい。</li>
+						</ul>
+					</div>
+					<svg width="100%" height="100%" class="box-contents__border">
+						<rect
+							width="100%"
+							height="100%"
+							fill="none"
+							stroke="gray"
+							stroke-width="3"
+						/>
+					</svg>
+				</div>
+				<div class="box-contents">
+					<h3 class="heading-ribbon">
+						<span>お知らせ</span>
+					</h3>
+					<div class="box-contents__inner">
+						<ul>
+							<li>2023.08.13 日本酒ゴーアラウンド2023 大阪公式サイトオープンしました。</li>
+						</ul>
+					</div>
+					<svg width="100%" height="100%" class="box-contents__border">
+						<rect
+							width="100%"
+							height="100%"
+							fill="none"
+							stroke="gray"
+							stroke-width="3"
+						/>
+					</svg>
+				</div>
+			</div>
+		</section>
+		<section class="section section-storeList">
+			<div class="container">
+			<h2><img src="/assets/images/storelist-heading.png" class="storelist-heading__image" alt="参加店舗一覧" width="948" height="851"></h2>
 			<ul class="store-list" role="list">
 				{
 					stores.map((store:any) => (
-						<li class="store-item"><a href={`/blog/${store.slug}`} class="store-link">{store.title.rendered}</a></li>
+						<li class="store-item"><a href={`/blog/${store.slug}`} class="store-link"><span class="store-number">{store.acf.store_number}</span>{store.title.rendered}</a></li>
 					))
 				}
 			</ul>
@@ -66,9 +167,10 @@ const stores = await res.json();
 
 <script>
 	import gsap from 'gsap';
-	import ScrollTrigger from 'gsap/ScrollTrigger';
+	import { ScrollTrigger } from "gsap/ScrollTrigger";
+	import p5 from 'p5';
 
-	// gsap.registerPlugin(ScrollTrigger);
+	gsap.registerPlugin(ScrollTrigger);
 	gsap.timeline({ repeat: 0, repeatDelay: 0.5 })
 	.to(".main-visual__bg", { scale: 1, duration: .5, ease: "Power1.easeOut", delay: .3 }).to(".main-visual__bg", { borderRadius: 0})
 	.to(".main-visual__lineStart", { x: 0, duration: .5 }, "-=0.9")
@@ -86,22 +188,200 @@ const stores = await res.json();
 		.to(".main-visual__sakazukinBottomImage:nth-of-type(1)",{y: 0, opacity: 1, scale: 1, duration: .7, ease: "back.out(1.7)"}, "-=0.7")
 		.to(".main-visual__sakazukinBottomImage:nth-of-type(6)",{y: 0, opacity: 1, scale: 1, duration: .7, ease: "back.out(1.7)"}, "-=0.5")
 		.to(".main-visual__sakazukinBottomImage:nth-of-type(2)",{y: 0, opacity: 1, scale: 1, duration: .7, ease: "back.out(1.7)"}, "-=0.5")
-		.to(".main-visual__date",{y: 0, opacity: 1, duration: .7}, "-=0.5");
+		.to(".main-visual__message1",{maskSize: '200% 100%', duration: 1}, "-=1.5")
+		.to(".main-visual__message2",{maskSize: '200% 100%', duration: 1}, "-=1")
+		.to(".main-visual__date",{y: 0, opacity: 1, duration: 1, ease: "linear"}, "-=0.5");
+
+	gsap.utils.toArray('.heading-ribbon')
+		.forEach((item) => {
+			gsap.fromTo(item,
+				{ y: 0, opacity: 0},
+				{ y: '-50%', opacity: 1,
+					scrollTrigger:{
+						trigger:item,
+						start:'top 80%',
+						end:'bottom 20%',
+						toggleActions:'play none none reverse',
+					}});
+		});
+
+	gsap.utils.toArray('.box-contents__border>rect')
+		.forEach((item) => {
+			gsap.to(item,
+				{
+					strokeDashoffset: '0',
+					ease: 'linear',
+					duration: 0.7,
+					scrollTrigger: {
+						trigger: item.parentNode,
+						start: 'top 80%',
+						end: 'bottom 20%',
+						toggleActions: 'play none none reverse',
+					}
+				});
+		});
+
+	gsap.utils.toArray('.box-contents__inner')
+		.forEach((item) => {
+			gsap.to(item,
+				{
+					maskSize: '100% 130%',
+					ease: 'linear',
+					duration: 0.7,
+					scrollTrigger: {
+						trigger: item.parentNode,
+						start: 'top 80%',
+						end: 'bottom 20%',
+						toggleActions: 'play none none reverse',
+					}
+				});
+		});
+
+	window.addEventListener('DOMContentLoaded',()=>{
+		const effect = document.querySelector('.main-visual__effect');
+		const effectCircle = document.querySelector('.main-visual__effectCircle');
+		const light = document.getElementById('effectLightImage');
+		const circle = document.getElementById('effectCircleElement');
+		const rotates = [45, 135, 225, 315];
+
+		const effectWidth = effect.offsetWidth;
+		const effectHeight = effect.offsetHeight;
+		const effectCircleWidth = effectCircle.offsetWidth;
+		const effectCircleHeight = effectCircle.offsetHeight;
+
+		const images = [];
+		const elements = [];
+
+		function isOverlapping(newImg) {
+			for (let img of images) {
+				if (newImg.left < img.left + img.width &&
+					newImg.left + newImg.width > img.left &&
+					newImg.top < img.top + img.height &&
+					newImg.top + newImg.height > img.top) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+		for (let i = 0; i < 20; i++) {
+			let tries = 0;
+			let maxTries = 100;  // 画像の位置を計算する最大試行回数
+
+			let imgData;
+			do {
+				const randomX = Math.random() * (effectWidth - 20);
+				const randomY = Math.random() * (effectHeight - 20);
+				const randomS　= 20 + Math.trunc(Math.random() * 20);
+				imgData = {
+					left: randomX,
+					top: randomY,
+					width: 20,
+					height: 20,
+					size: randomS
+				};
+				tries++;
+				if (tries > maxTries) {
+					console.error('Max tries reached. Some images might overlap.');
+					break;
+				}
+			} while (isOverlapping(imgData));
+
+			images.push(imgData);
+
+			const lightImg = light.cloneNode(true);
+			lightImg.id = '';
+			lightImg.style.width = imgData.size + 'px';
+			lightImg.style.left = (imgData.left / effectWidth * 100) + '%';
+			lightImg.style.top = (imgData.top / effectHeight * 100) + '%';
+			effect.appendChild(lightImg);
+		}
+
+		for (let i = 0; i < 20; i++) {
+			let tries = 0;
+			let maxTries = 100;  // 画像の位置を計算する最大試行回数
+
+			let elementData;
+			do {
+				const randomX = Math.random() * (effectCircleWidth - 20);
+				const randomY = Math.random() * (effectCircleHeight - 20);
+				const randomR　= rotates[Math.floor(Math.random() * rotates.length)];
+				elementData = {
+					left: randomX,
+					top: randomY,
+					width: 20,
+					height: 20,
+					rotate: randomR
+				};
+				tries++;
+				if (tries > maxTries) {
+					console.error('Max tries reached. Some images might overlap.');
+					break;
+				}
+			} while (isOverlapping(elementData));
+
+			elements.push(elementData);
+
+			const circleElement = circle.cloneNode(true);
+			circleElement.id = '';
+			circleElement.style.rotate = elementData.rotate + 'deg';
+			circleElement.style.left = (elementData.left / effectCircleWidth * 100) + '%';
+			circleElement.style.top = (elementData.top / effectCircleHeight * 100) + '%';
+			effectCircle.appendChild(circleElement);
+		}
+
+	});
+
+	const sketch = (p: p5) => {
+		// 描画色1・2
+		const color1 = p.color("#fffbe3");
+		const color2 = p.color("#24495c");
+		// 描画色1の強さ
+		let color1amount = 1;
+
+		/** 初期化処理 */
+		p.setup = () => {
+			p.createCanvas(p.windowWidth, p.windowHeight);
+			p.angleMode(p.DEGREES); // 回転の単位を弧度から角度に変更
+			p.noStroke(); // 線なし（塗りつぶしのみ）に設定
+			// p.background("#131821"); // 背景色を設定
+			p.blendMode(p.LIGHTEST); // 合成モードを「LIGHTEST=明るく」に設定
+		};
+
+		/** フレームごとの描画処理 */
+		p.draw = () => {
+			// 塗り色を設定
+			p.fill(p.lerpColor(color2, color1, color1amount));
+			// 画面中央を原点に
+			p.translate(p.width / 2, p.height / 2);
+			// フレーム数分（1フレームあたり13度）回転させる
+			p.rotate(p.frameCount * 13);
+			// 楕円を描く
+			p.ellipse(p.frameCount / 2, 0, p.frameCount, p.frameCount / 3);
+			// 「描画色1の強さ」を少し弱くする
+			color1amount *= 0.995;
+		}
+	}
+
+	// new p5(sketch, document.getElementById('main-visual-canvas'));
 </script>
 <style lang="scss">
 	main {
 		margin: auto;
 		color: var(--font-color);
-		font-size: 20px;
-		line-height: 1.6;
+		line-height: 1.75;
 	}
 	.main-visual {
 		position: relative;
 		display: grid;
 		height: 100vh;
 		height: 100dvh;
+		max-height: 760px;
 		overflow: hidden;
 		background: url(/assets/images/logo.svg) no-repeat center/200px;
+		@media (orientation: landscape){
+			max-height: none;
+		}
 	}
 	.main-visual__bg {
 		position: absolute;
@@ -129,11 +409,16 @@ const stores = await res.json();
 		background-size: 200px 200px;
 		background-position: 0 0, 100px 100px;
 		opacity: 0;
+		animation: 10s linear stageBack infinite;
 		&>.container {
 			container: layout / inline-size;
 			position: relative;
 			height: 100%;
 		}
+	}
+	@keyframes stageBack {
+		0% {background-position: 0 0, 100px 100px;}
+		100% {background-position: 100px 100px, 200px 200px;}
 	}
 	.main-visual__lineStart,
 	.main-visual__lineEnd {
@@ -153,17 +438,44 @@ const stores = await res.json();
 		translate: -100%;
 	}
 
-	.store-list {
-		padding-left: 0;
-		list-style: none;
-		display: grid;
-		gap: 1rem;
-		//grid-template-columns: repeat(2, 1fr);
-	}
-	.store-link {
-		color: inherit;
-		text-decoration: none;
+
+	// メインビジュアル
+	.main-visual__effect,
+	.main-visual__effectCircle {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
 		pointer-events: none;
+	}
+	.main-visual__effectCircleElement {
+		position: absolute;
+		width: 30px;
+		height: 20px;
+		background-image: radial-gradient(rgb(255,255,255) 40%,transparent 40%),radial-gradient(rgb(255,255,255) 40%,transparent 40%);
+		background-size: 12px 12px,8px 8px;
+		background-position: 0 0,14px 0;
+		background-repeat: no-repeat;
+		opacity: .8;
+	}
+	.main-visual__effectLightImage {
+		position: absolute;
+		width: 39px;
+		opacity: .8;
+		animation: lightEffect linear 3s infinite;
+		&:nth-of-type(n + 3) {
+			animation-duration: 5s;
+		}
+		&:nth-of-type(n + 5) {
+			animation-duration: 2s;
+		}
+	}
+	@keyframes lightEffect {
+		0% {scale: 1}
+		25% {scale: 1.3}
+		50% {scale: 1}
+		75% {scale: 0.7}
+		100% {scale: 1}
 	}
 	.main-visual__date {
 		position: absolute;
@@ -176,11 +488,9 @@ const stores = await res.json();
 		transform: translateY(150%);
 	}
 	.main-visual__dateImage {
-		max-width: 800px;
+		width: 800px;
 		margin-inline: auto;
 	}
-
-	// メインビジュアルステージ内
 	.main-visual__flug {
 		position: absolute;
 		left: 0;
@@ -216,6 +526,38 @@ const stores = await res.json();
 	.main-visual__logoImage {
 		margin-inline: auto;
 		min-width: 50%;
+	}
+	.main-visual__message {
+		position: absolute;
+		width: 70%;
+		max-width: 360px;
+		left: 0;
+		right: 0;
+		margin-inline: auto;
+		top: min(19%, 170px);
+		z-index: 1;
+		@media (min-width: 840px) {
+			top: calc(25% + 130px);
+		}
+		@media (min-width: 1160px) {
+			top: calc(16% + 200px);
+		}	}
+	.main-visual__message1,
+	.main-visual__message2 {
+		padding-bottom: 2px;
+		border-bottom: 2px dotted #FFF8A5;
+		-webkit-mask-image: linear-gradient(90deg, #000000 0, #000000 50%, transparent);
+		mask-image: linear-gradient(90deg, #000000 0, #000000 50%, transparent);
+		-webkit-mask-size: 0% 100%;
+		mask-size: 0% 100%;
+		-webkit-mask-repeat: no-repeat;
+		mask-repeat: no-repeat;
+	}
+	.main-visual__message2 {
+		width: 67%;
+		margin: .5rem auto 0;
+	}
+	.main-visual__messageImage2 {
 	}
 	.main-visual__cakeBase {
 		position: absolute;
@@ -386,5 +728,197 @@ const stores = await res.json();
 	@keyframes kyoto {
 		0% {transform: rotateY(0deg)}
 		100% {transform: rotateY(360deg)}
+	}
+
+	// セクション イントロダクション
+	.section-introduction {
+		padding-top: var(--space-x10);
+		padding-bottom: var(--space-x20);
+		background: url(/assets/images/section-bg.jpg) no-repeat center/cover;
+	}
+	.introductoin-lead {
+		display: flex;
+		align-items: center;
+		font-feature-settings: "palt";
+		gap: var(--space-x2);
+		width: fit-content;
+		margin-inline: auto;
+		padding-inline: var(--space-x5);
+		font-size: min(3.5vw, 20px);
+		border-bottom: 3px dotted var(--color-accent);
+		padding-bottom: var(--space-x4);
+	}
+	.introductoin-lead__image {
+		height: 35vw;
+		max-height: 160px;
+		width: auto;
+	}
+	.introductoin-lead--sub {
+		padding-inline: var(--space-x5);
+		max-width: 480px;
+		margin-inline: auto;
+	}
+	.heading-ribbon {
+		position: absolute;
+		display: flex;
+		align-items: center;
+		left: 0;
+		right: 0;
+		width: fit-content;
+		min-width: 190px;
+		margin: 0 auto;
+		text-align: center;
+		color: white;
+		letter-spacing: .1em;
+		z-index: 1;
+		//transform: translateY(-50%);
+		filter: drop-shadow(0 1px 0 #fff) drop-shadow(-1px 0 0 #fff) drop-shadow(1px 0 #fff) drop-shadow(0 -1px #fff) drop-shadow(0 1px 0 var(--color-accent)) drop-shadow(-1px 0 0 var(--color-accent)) drop-shadow(0 -1px 0 var(--color-accent)) drop-shadow(1px 0px 0 var(--color-accent));
+		&::before,
+		&::after {
+			content: "";
+			display: block;
+			background-color: var(--color-accent);
+			width: 1em;
+			height: 1em;
+			border-radius: 50%;
+		}
+		&::before {
+			transform: translate(50%);
+		}
+		&::after {
+			transform: translate(-50%);
+		}
+		&>span {
+			position: relative;
+			display: block;
+			padding: 0.3em 2em;
+			background: var(--color-accent);
+			clip-path: polygon(0 0,50% 0.4em,100% 0,100% 100%,50% calc(100% - 0.4em),0 100%);
+			z-index: 1;
+			&::before,
+			&::after {
+				position: absolute;
+				top: 50%;
+				left: 0;
+				content: "";
+				background-color: #fff;
+				display: block;
+				width: 5px;
+				height: 5px;
+				border-radius: 50%;
+				transform: translateY(-50%);
+			}
+			&::after {
+				left: unset;
+				right: 0;
+			}
+		}
+	}
+	.box-contents {
+		position: relative;
+		max-width: 800px;
+		margin-top: var(--space-x20);
+		margin-inline: auto;
+	}
+	.box-contents__inner {
+		padding: var(--space-x10) var(--space-x5) var(--space-x5);
+		background-color: rgba(255,255,255,.75);
+		-webkit-mask-image: linear-gradient(transparent,#000000 10%, #000000);
+		mask-image: linear-gradient(transparent,#000000 10%, #000000);
+		//-webkit-mask-image: url(/assets/images/wave-mask.svg);
+		//mask-image: url(/assets/images/wave-mask.svg);
+		-webkit-mask-size: 100% 0%;
+		mask-size: 100% 0%;
+		-webkit-mask-position: left bottom;
+		mask-position: left bottom;
+		-webkit-mask-repeat: no-repeat;
+		mask-repeat: no-repeat;
+	}
+	.box-contents__border {
+		position: absolute;
+		inset: 0;
+		overflow: visible;
+		&>rect {
+			width: 100%;
+			height: 100%;
+			stroke: var(--color-accent);
+			stroke-dasharray:400%;
+			stroke-dashoffset:-400%;
+		}
+	}
+	.rule-list {
+		counter-reset: rule;
+	}
+	.rule-item {
+		display: flex;
+		gap: .5rem;
+		&::before {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			min-width: 1.75em;
+			height: 1.75em;
+			padding-bottom: 0.1em;
+			background-color: var(--color-accent);
+			border-radius: 50%;
+			counter-increment: rule;
+			content: counter(rule);
+			color: white;
+		}
+		&+.rule-item {
+			margin-top: .75rem;
+		}
+	}
+	.notes-list {
+		list-style-type: decimal;
+		padding-left: 1.5em;
+	}
+	.notes-item {
+		&+.notes-item {
+			margin-top: .75rem;
+		}
+	}
+
+	//店舗一覧
+	.section-storeList {
+		background: url(/assets/images/section-store-bg.jpg);
+	}
+	.storelist-heading__image {
+		width: 200px;
+		margin-inline: auto;
+	}
+	.store-list {
+		display: grid;
+		gap: var(--space-x2);
+		padding: var(--space-x5) var(--space-x2);
+		background-color: rgba(255,255,255,.6);
+		@media (min-width: 576px) {
+			grid-template-columns: repeat(2, 1fr);
+		}
+		@media (min-width: 992px) {
+			grid-template-columns: repeat(3, 1fr);
+		}
+	}
+	.store-link {
+		display: flex;
+		align-items: center;
+		gap: var(--space-x2);
+		height: 100%;
+		padding: var(--space-x3)  var(--space-x2);
+		color: inherit;
+		text-decoration: none;
+		pointer-events: none;
+		background-color: rgba(255,255,255,.7);
+	}
+	.store-number {
+		display: inline-flex;
+		justify-content: center;
+		align-items: center;
+		min-width: 1.75em;
+		height: 1.75em;
+		padding-bottom: 0.1em;
+		color: white;
+		border-radius: 50%;
+		background-color: #1D2A82;
 	}
 </style>
