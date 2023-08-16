@@ -1,5 +1,5 @@
 ---
-
+import ProductOnly from '../components/ProductOnly.astro';
 import Footer from '../components/Footer.astro';
 
 interface Props {
@@ -7,6 +7,9 @@ interface Props {
 }
 
 const { title } = Astro.props;
+const GTMKey = import.meta.env.PUBLIC_GTM_KEY;
+const GTMKeyNoScript= `https://www.googletagmanager.com/ns.html?id=${GTMKey}`;
+
 ---
 
 <!DOCTYPE html>
@@ -18,7 +21,6 @@ const { title } = Astro.props;
 		<title>{title}</title>
 		<meta name="description" content="10月1日日本酒の日に開催される、日本酒を愛する人のためのイベント。今年はなんと85店舗が参加！">
 		<meta name="format-detection" content="telephone=no">
-		<meta name="generator" content={Astro.generator}>
 		<meta name="canonical" content="https://nga-osaka.com">
 		<meta property="og:url" content="https://nga-osaka.com">
 		<meta property="og:type" content="website">
@@ -28,10 +30,24 @@ const { title } = Astro.props;
 		<meta property="og:image" content="https://nga-osaka.com/assets/images/main-visual.jpg">
 		<link rel="preconnect" href="https://fonts.googleapis.com">
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-		<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;500&display=swap" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500&display=swap" rel="stylesheet">
+		<ProductOnly>
+			<script define:vars={{GTMKey}}>
+				(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+						new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+					j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+					'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+				})(window,document,'script','dataLayer', GTMKey);
+			</script>
+		</ProductOnly>
 	</head>
 	<body>
-		<slot />
+	<ProductOnly>
+		<noscript>
+			<iframe src={GTMKeyNoScript} height="0" width="0" style="display:none;visibility:hidden"></iframe>
+		</noscript>
+	</ProductOnly>
+	<slot />
 		<Footer />
 	</body>
 </html>
@@ -74,6 +90,9 @@ const { title } = Astro.props;
 		max-width: calc(1200px + var(--space-x5) * 2);
 		margin-inline: auto;
 		padding-inline: var(--space-x5);
+	}
+	h1,h2,h3,h4,h5,h6 {
+		font-weight: 500;
 	}
 	img {
 		display: block;

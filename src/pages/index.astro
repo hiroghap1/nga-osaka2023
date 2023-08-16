@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Card from '../components/Card.astro';
+import { Picture } from '@astrojs/image/components';
 
 const res = await fetch(`${import.meta.env.PUBLIC_API_URL}/store?per_page=100&order=asc`);
 const stores = await res.json();
@@ -375,7 +376,7 @@ const stores = await res.json();
 		position: relative;
 		display: grid;
 		height: 100vh;
-		height: 100dvh;
+		height: 100svh;
 		max-height: 760px;
 		overflow: hidden;
 		background: url(/assets/images/logo.svg) no-repeat center/200px;
@@ -843,7 +844,7 @@ const stores = await res.json();
 			height: 100%;
 			stroke: var(--color-accent);
 			stroke-dasharray:400%;
-			stroke-dashoffset:-400%;
+			stroke-dashoffset:400%;
 		}
 	}
 	.rule-list {
