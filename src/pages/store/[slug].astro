@@ -43,6 +43,15 @@ type Post = {
     store_station: string,
     store_route: string,
   },
+  _embedded: {
+    'wp:featuredmedia': [{
+      source_url: string,
+      media_details: {
+        width: string,
+        height: string,
+      }
+    }]
+  }
 };
 const { slug } = Astro.params;
 
@@ -61,15 +70,22 @@ export async function getStaticPaths() {
 
 const store = Astro.props.post;
 console.log(store);
-console.log(store._embedded['wp:featuredmedia'][0]);
-const eyecatch = store._embedded['wp:featuredmedia'][0];
+console.log(store._embedded);
+const eyeCatch = store._embedded['wp:featuredmedia'] ? store._embedded['wp:featuredmedia'][0]
+  : {
+    source_url: 'https://data.nga-osaka.com/2023/wp-content/uploads/2023/08/preparation-image16-9.jpg',
+    media_details: {
+      width: '1920',
+      height: '1280',
+    }
+  };
 ---
 
 <Layout title={store.title.rendered}>
   <main>
     <h1 set:html={store.title.rendered} />
     <p set:html={store.content.rendered} />
-    <img src={eyecatch.source_url} alt={store.acf.store_name} width={eyecatch.media_details.width} height={eyecatch.media_details.height} decoding="async">
+    <img src={eyeCatch.source_url} alt={store.acf.store_name} width={eyeCatch.media_details.width} height={eyeCatch.media_details.height} decoding="async">
     <p set:html={store.acf.store_description}></p>
     <p set:html={store.acf.sake_description}></p>
   </main>
