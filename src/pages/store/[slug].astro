@@ -1,0 +1,76 @@
+---
+import Layout from '@src/layouts/Layout.astro';
+
+type Post = {
+  link: string;
+  title: {
+    rendered: string;
+  };
+  content: {
+    rendered: string;
+  }
+  acf: {
+    store_number: string,
+    store_name: string,
+    store_description: string,
+    sake_name: string,
+    sake_company: string,
+    sake_description: string,
+    store_address1: string,
+    store_address2: string,
+    store_tel: string,
+    event_start: string,
+    event_end: string,
+    capacity_sitting: number,
+    capacity_standing: number,
+    appetizer_name: string,
+    appetizer_price1: number,
+    appetizer_image: string,
+    sake_service: string,
+    sake_pref: string,
+    store_url: string,
+    store_image1: string,
+    store_image2: string,
+    store_image3: string,
+    store_zip: string,
+    lat: string,
+    lng: string,
+    map_name: string,
+    googlemap_fix: string,
+    facebook_url: string,
+    twitter_url: string,
+    instagram_url: string,
+    store_station: string,
+    store_route: string,
+  },
+};
+const { slug } = Astro.params;
+
+export async function getStaticPaths() {
+  const res = await fetch(`${import.meta.env.PUBLIC_API_URL}/store?per_page=100&order=asc&_embed`);
+  const posts = await res.json();
+  // console.log(posts)
+
+  return posts.map(post => (
+    {
+      params: { slug: post.slug },
+      props: { post: post },
+    }
+  ))
+}
+
+const store = Astro.props.post;
+console.log(store);
+console.log(store._embedded['wp:featuredmedia'][0]);
+const eyecatch = store._embedded['wp:featuredmedia'][0];
+---
+
+<Layout title={store.title.rendered}>
+  <main>
+    <h1 set:html={store.title.rendered} />
+    <p set:html={store.content.rendered} />
+    <img src={eyecatch.source_url} alt={store.acf.store_name} width={eyecatch.media_details.width} height={eyecatch.media_details.height} decoding="async">
+    <p set:html={store.acf.store_description}></p>
+    <p set:html={store.acf.sake_description}></p>
+  </main>
+</Layout>
