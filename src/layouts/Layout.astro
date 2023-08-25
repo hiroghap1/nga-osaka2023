@@ -1,15 +1,22 @@
 ---
 import ProductOnly from '../components/ProductOnly.astro';
+import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 
 interface Props {
 	title: string;
 }
-
+const { slug } = Astro.params;
 const { title } = Astro.props;
 const GTMKey = import.meta.env.PUBLIC_GTM_KEY;
 const GTMKeyNoScript= `https://www.googletagmanager.com/ns.html?id=${GTMKey}`;
 
+const pageTitle = slug ? title + ' - 日本酒ゴーアラウンド大阪2023 公式サイト' : '日本酒ゴーアラウンド大阪2023 公式サイト';
+const description = slug ? title + '。10月1日日本酒の日に開催される、日本酒を愛する人のためのイベント。今年はなんと85店舗が参加！' : '10月1日日本酒の日に開催される、日本酒を愛する人のためのイベント。今年はなんと85店舗が参加！';
+
+
+const url = new URL(Astro.url.pathname, 'https://nga-osaka.com');
+console.log();
 ---
 
 <!DOCTYPE html>
@@ -18,14 +25,14 @@ const GTMKeyNoScript= `https://www.googletagmanager.com/ns.html?id=${GTMKey}`;
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width">
 		<link rel="icon" type="image/svg+xml" href="/favicon.png">
-		<title>{title}</title>
-		<meta name="description" content="10月1日日本酒の日に開催される、日本酒を愛する人のためのイベント。今年はなんと85店舗が参加！">
+		<title>{pageTitle}</title>
+		<meta name="description" content={description}>
 		<meta name="format-detection" content="telephone=no">
-		<meta name="canonical" content="https://nga-osaka.com">
-		<meta property="og:url" content="https://nga-osaka.com">
+		<meta name="canonical" content={url.href}>
+		<meta property="og:url" content={url.href}>
 		<meta property="og:type" content="website">
 		<meta property="og:title" content={title}>
-		<meta property="og:description" content="10月1日日本酒の日に開催される、日本酒を愛する人のためのイベント。今年はなんと85店舗が参加！">
+		<meta property="og:description" content={description}>
 		<meta property="og:site_name" content="日本酒ゴーアラウンド大阪 2023 公式サイト">
 		<meta property="og:image" content="https://nga-osaka.com/assets/images/main-visual.jpg">
 		<link rel="preconnect" href="https://fonts.googleapis.com">
@@ -47,6 +54,7 @@ const GTMKeyNoScript= `https://www.googletagmanager.com/ns.html?id=${GTMKey}`;
 			<iframe src={GTMKeyNoScript} height="0" width="0" style="display:none;visibility:hidden"></iframe>
 		</noscript>
 	</ProductOnly>
+	<Header />
 	<slot />
 		<Footer />
 	</body>
@@ -54,6 +62,7 @@ const GTMKeyNoScript= `https://www.googletagmanager.com/ns.html?id=${GTMKey}`;
 <style is:global>
 	:root {
 		--color-accent: #4BA095;
+		--color-sub-accent: #1D2A82;
 		--font-color: #333333;
 		--space-x1: 4px;
 		--space-x2: 8px;
@@ -67,6 +76,11 @@ const GTMKeyNoScript= `https://www.googletagmanager.com/ns.html?id=${GTMKey}`;
 		--space-x10: 40px;
 		--space-x15: 60px;
 		--space-x20: 80px;
+
+		--break-sm: 576px;
+		--break-md: 768px;
+		--break-lg: 992px;
+		--break-xl: 1200px;
 	}
 	*,::before,::after {
 		box-sizing: border-box;
@@ -79,8 +93,13 @@ const GTMKeyNoScript= `https://www.googletagmanager.com/ns.html?id=${GTMKey}`;
 	}
 	body {
 		margin: 0;
+		padding-bottom: 60px;
 		font-family: 'Noto Sans JP', sans-serif;
 		font-weight: 400;
+		line-height: 1.75;
+		@media (min-width: 768px) {
+			padding-bottom: 0;
+		}
 	}
 	code {
 		font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
@@ -108,5 +127,8 @@ const GTMKeyNoScript= `https://www.googletagmanager.com/ns.html?id=${GTMKey}`;
 	 }
 	 .text-center {
 		 text-align: center;
+	 }
+	 .u-display-block {
+		 display: block!important;
 	 }
 </style>

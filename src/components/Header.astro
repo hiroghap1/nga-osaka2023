@@ -1,0 +1,70 @@
+---
+interface Props {
+  title: string;
+  body: string;
+  href: string;
+}
+
+const { href, title, body } = Astro.props;
+---
+<header class="header">
+  <nav class="nav">
+    <ul class="main-nav__list">
+      <li class="main-nav__item"><a href="/" class="main-nav__link"><img src="/assets/images/icon-home.svg" class="main-nav__image" alt="" width="24" height="24"><span class="main-nav__text">ホーム</span></a></li>
+      <li class="main-nav__item"><a href="/store" class="main-nav__link"><img src="/assets/images/icon-store.svg" class="main-nav__image" alt="" width="24" height="24"><span class="main-nav__text">参加店舗</span></a></li>
+      <li class="main-nav__item"><a href="/liquor-shop" class="main-nav__link disabled"><img src="/assets/images/icon-liquor.svg" class="main-nav__image" alt="" width="24" height="24"><span class="main-nav__text">協力酒販店</span></a></li>
+      <li class="main-nav__item"><a href="/map" class="main-nav__link disabled"><img src="/assets/images/icon-map.svg" class="main-nav__image" alt="" width="24" height="24"><span class="main-nav__text">店舗地図</span></a></li>
+      <li class="main-nav__item"><button class="main-nav__link disabled"><img src="/assets/images/icon-history.svg" class="main-nav__image" alt="" width="24" height="24"><span class="main-nav__text">過去のページ</span></button></li>
+    </ul>
+  </nav>
+</header>
+
+<style lang="scss">
+  .header {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10;
+  }
+  .main-nav__list {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    margin: 0;
+    @media (min-width: 768px) {
+      display: none;
+    }
+  }
+  .main-nav__item {
+    padding-bottom: env(safe-area-inset-bottom);
+    background-color: #f9f9f9;
+    filter: drop-shadow(0 0 1px rgba(0,0,0,.15));
+    &:not(:first-of-type) {
+      border-left: 1px solid #ddd;
+    }
+  }
+  .main-nav__link {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 60px;
+    border: 0;
+    background-color: transparent;
+    text-decoration: none;
+    font-size: 10px;
+    color: var(--color-font);
+    line-height: 1;
+    &.disabled {
+      opacity: .4;
+      pointer-events: none;
+    }
+  }
+  .main-nav__image {
+    filter: contrast(0.6);
+  }
+  .main-nav__text {
+    margin-top: var(--space-x1);
+  }
+</style>
