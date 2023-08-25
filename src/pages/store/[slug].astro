@@ -138,7 +138,7 @@ const eyeCatch = store._embedded['wp:featuredmedia'] ? store._embedded['wp:featu
     }
   };
 const facebook = store.acf.facebook_url ? `<li><a href="${store.acf.facebook_url}" target="_blank"><img src="/assets/images/sns-facebook.png" alt="Facebook" width="36" height="36" loading="lazy"></a></li>` : '';
-const twitter = store.acf.twitter_url ? `<li><a href="${store.acf.twitter_url}" target="_blank"><img src="/assets/images/sns-x.svg" alt="X(Twitter)" width="36" height="36" loading="lazy"></a></li>` : '';
+const twitter = store.acf.twitter_url ? `<li><a href="${store.acf.twitter_url}" target="_blank"><img src="/assets/images/sns-x.png" alt="X(Twitter)" width="36" height="36" loading="lazy"></a></li>` : '';
 const instagram = store.acf.instagram_url ? `<li><a href="${store.acf.instagram_url}" target="_blank"><img src="/assets/images/sns-instagram.png" alt="Instagram" width="36" height="36" loading="lazy"></a></li>` : '';
 
 const snsList = (facebook || twitter || instagram) ? `<ul>${facebook + twitter + instagram}</ul>` : '';
@@ -441,31 +441,32 @@ const googleMapSrc = `https://maps.google.co.jp/maps?output=embed&q=${store.acf.
     }
     .store-spec__group {
         display: grid;
-        grid-template: 1fr / .3fr 1fr;
+        grid-template: 1fr / minmax(7em, .3fr) 1fr;
         border: 1px solid #ddd;
         &:not(:nth-of-type(1)) {
             border-top: 0;
         }
     }
-    .store-spec__term {
+    .store-spec__term,
+    .store-spec__description {
+      padding: var(--space-x2) var(--space-x3);
+      @media (min-width: 576px) {
         padding: var(--space-x3) var(--space-x4);
+      }
+      @media (min-width: 768px) {
+        padding: var(--space-x4) var(--space-x8);
+      }
+    }
+    .store-spec__term {
         background-color: var(--color-sub-accent);
         background-image: linear-gradient(-90deg, var(--color-sub-accent) 0%, color.scale(#1D2A82, $lightness: -25%) 80%, color.scale(#1D2A82, $lightness: -15%) 100%);
         color: white;
-        @media (min-width: 768px) {
-            padding: var(--space-x4) var(--space-x8);
-        }
-
     }
     .store-spec__description {
         margin-left: 0;
-        padding: var(--space-x3) var(--space-x4);
         background-color: rgba(255,255,255,.8);
         >* {
             margin-top: 0;
-        }
-        @media (min-width: 768px) {
-            padding: var(--space-x4) var(--space-x8);
         }
     }
     .sns-list {

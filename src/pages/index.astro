@@ -74,7 +74,7 @@ const stores = await res.json();
 				<img src="/assets/images/badge-osaka.png" class="introductoin-lead__image" alt="さかずきん 大阪" width="324" height="324">
 			</div>
 			<div class="introductoin-lead--sub">
-				<h3 class="text-center">バッジは15日発売開始！</h3>
+				<h3 class="text-center">バッジは参加店舗・協力酒販店で販売中！</h3>
 				<p>
 					今年のバッジは18種類！<br>
 					※数の少ない都市が御座いますので､希望の都市がある方はお急ぎ下さい。
@@ -136,6 +136,7 @@ const stores = await res.json();
 					</h3>
 					<div class="box-contents__inner">
 						<ul>
+							<li>2023.08.25 参加店舗ページを公開しました。</li>
 							<li>2023.08.13 日本酒ゴーアラウンド2023 大阪公式サイトオープンしました。</li>
 						</ul>
 					</div>
@@ -153,7 +154,7 @@ const stores = await res.json();
 		</section>
 		<section class="section section-storeList">
 			<div class="container">
-			<h2><img src="/assets/images/storelist-heading.png" class="storelist-heading__image" alt="参加店舗一覧" width="948" height="851"></h2>
+			<h2 id="store-list"><img src="/assets/images/storelist-heading.png" class="storelist-heading__image" alt="参加店舗一覧" width="948" height="851"></h2>
 			<ul class="store-list" role="list">
 				{
 					stores.map((store:any) => (
@@ -390,6 +391,9 @@ const stores = await res.json();
 		width: 100vmax;
 		height: 100vmax;
 		background-color: #E7A7B4;
+		background-image: url(/assets/images/main-shadow.jpg);
+		background-blend-mode: lighten;
+		background-size: cover;
 		scale: 0;
 		border-radius: 50%;
 		&.bg1 {
@@ -909,6 +913,15 @@ const stores = await res.json();
 		text-decoration: none;
 		//pointer-events: none;
 		background-color: rgba(255,255,255,.7);
+		background-image: radial-gradient(circle, #f0f0f0 0%, #e9e9e9 100%);
+		background-size: 0%;
+		background-repeat: no-repeat;
+		background-position: center;
+		transition: background-size .3s ease-in-out;
+		&:hover {
+			background-size: 100%;
+			transition: background-size .15s ease-in-out;
+		}
 	}
 	.store-number {
 		display: inline-flex;
