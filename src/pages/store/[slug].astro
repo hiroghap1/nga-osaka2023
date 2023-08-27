@@ -1,5 +1,9 @@
 ---
 import Layout from '@src/layouts/Layout.astro';
+import { Image, Picture } from '@astrojs/image/components';
+import Lightbox from '@julian_cataldo/astro-lightbox/Lightbox.astro';
+import DisplayComponents from '@src/components/DisplayComponents.astro';
+
 
 type Post = {
   link: string;
@@ -29,9 +33,24 @@ type Post = {
     sake_service: string,
     sake_pref: string,
     store_url: string,
-    store_image1: string,
-    store_image2: string,
-    store_image3: string,
+    store_image1: undefined | {
+      url: string,
+      width: string,
+      height: string,
+      mime_type: string
+    },
+    store_image2: undefined | {
+      url: string,
+      width: string,
+      height: string,
+      mime_type: string
+    },
+    store_image3: undefined | {
+      url: string,
+      width: string,
+      height: string,
+      mime_type: string
+    },
     store_zip: string,
     lat: string,
     lng: string,
@@ -59,7 +78,6 @@ const { slug } = Astro.params;
 export async function getStaticPaths() {
   const res = await fetch(`${import.meta.env.PUBLIC_API_URL}/store?per_page=100&order=asc&_embed`);
   const posts = await res.json();
-  // console.log(posts)
 
   return posts.map(post => (
     {
@@ -109,6 +127,10 @@ const author = {
     name: '十徳日本酒販売所',
     slug: 'juttoku',
   },
+  12: {
+    name: 'いなごや酒店',
+    slug: 'inagoya',
+  },
   13: {
     name: '酒のはしもと',
     slug: 'hashimoto',
@@ -127,7 +149,7 @@ const author = {
   }
 }
 const store = Astro.props.post;
-// console.log(store);
+console.log(store);
 // console.log(store._embedded);
 const eyeCatch = store._embedded['wp:featuredmedia'] ? store._embedded['wp:featuredmedia'][0]
   : {
@@ -143,6 +165,24 @@ const instagram = store.acf.instagram_url ? `<li><a href="${store.acf.instagram_
 
 const snsList = (facebook || twitter || instagram) ? `<ul>${facebook + twitter + instagram}</ul>` : '';
 const googleMapSrc = `https://maps.google.co.jp/maps?output=embed&q=${store.acf.store_name}&z=16`;
+
+const notFoundImage1 = 'https://data.nga-osaka.com/2023/wp-content/uploads/2023/08/preparation-image1-1.jpg';
+const storeImage1Url = store.acf.store_image1 ? store.acf.store_image1.url : notFoundImage1;
+const storeImage1Width = store.acf.store_image1 ? store.acf.store_image1.width : '1';
+const storeImage1Height = store.acf.store_image1 ? store.acf.store_image1.height : '1';
+const storeImage1MimeType = store.acf.store_image1 ? store.acf.store_image1.mime_type.split('/')[1] : 'jpeg';
+
+const storeImage2Url = store.acf.store_image2 ? store.acf.store_image2.url : notFoundImage1;
+const storeImage2Width = store.acf.store_image2 ? store.acf.store_image2.width : '1';
+const storeImage2Height = store.acf.store_image2 ? store.acf.store_image2.height : '1';
+const storeImage2MimeType = store.acf.store_image2 ? store.acf.store_image2.mime_type.split('/')[1] : 'jpeg';
+
+const storeImage3Url = store.acf.store_image3 ? store.acf.store_image3.url : notFoundImage1;
+const storeImage3Width = store.acf.store_image3 ? store.acf.store_image3.width : '1';
+const storeImage3Height = store.acf.store_image3 ? store.acf.store_image3.height : '1';
+const storeImage3MimeType = store.acf.store_image3 ? store.acf.store_image3.mime_type.split('/')[1] : 'jpeg';
+
+const sakeService = store.acf.sake_service ? `${store.acf.sake_service}[${store.acf.sake_pref}]` : `${store.acf.sake_name}[${store.acf.sake_pref}]`;
 ---
 
 <Layout title={ store.title.rendered }>
@@ -188,6 +228,23 @@ const googleMapSrc = `https://maps.google.co.jp/maps?output=embed&q=${store.acf.
           </div>
         </div>
       </section>
+      <div class="store-image section">
+        <DisplayComponents image={store.acf.store_image1}>
+          <figure class="store-image__figure" data-lightbox="true">
+            <Image src={storeImage1Url} alt="" class="store-image__image" width={storeImage1Width} height={storeImage1Height} format={storeImage1MimeType} />
+          </figure>
+        </DisplayComponents>
+        <DisplayComponents image={store.acf.store_image2}>
+          <figure class="store-image__figure" data-lightbox="true">
+            <Image src={storeImage2Url} alt="" class="store-image__image" width={storeImage2Width} height={storeImage2Height} format={storeImage2MimeType} />
+          </figure>
+        </DisplayComponents>
+        <DisplayComponents image={store.acf.store_image3}>
+          <figure class="store-image__figure" data-lightbox="true">
+            <Image src={storeImage3Url} alt="" class="store-image__image" width={storeImage3Width} height={storeImage3Height} format={storeImage3MimeType} />
+          </figure>
+        </DisplayComponents>
+      </div>
       <section class="section">
         <dl class="store-spec">
           <div class="store-spec__group">
@@ -200,7 +257,7 @@ const googleMapSrc = `https://maps.google.co.jp/maps?output=embed&q=${store.acf.
           </div>
           <div class="store-spec__group">
             <dt class="store-spec__term">サービス酒</dt>
-            <dd class="store-spec__description">{store.acf.sake_service}[{store.acf.sake_pref}]</dd>
+            <dd class="store-spec__description">{sakeService}</dd>
           </div>
           <!--<div class="store-spec__group">-->
           <!--  <dt class="store-spec__term">お酒のタイプ</dt>-->
@@ -302,6 +359,22 @@ const googleMapSrc = `https://maps.google.co.jp/maps?output=embed&q=${store.acf.
           duration: 0.7,
           scrollTrigger: {
             trigger: item.parentNode,
+            start: 'top 80%',
+            end: 'bottom 20%',
+            toggleActions: 'play none none reverse',
+          }
+        });
+    });
+
+  gsap.utils.toArray('.store-image__figure')
+    .forEach((item) => {
+      gsap.to(item,
+        {
+          x: 0,
+          opacity: 1,
+          duration: 0.7,
+          scrollTrigger: {
+            trigger: item,
             start: 'top 80%',
             end: 'bottom 20%',
             toggleActions: 'play none none reverse',
@@ -471,7 +544,7 @@ const googleMapSrc = `https://maps.google.co.jp/maps?output=embed&q=${store.acf.
     }
     .sns-list {
         display: flex;
-        gap: var(--space-x4);
+        gap: var(--space-x10);
         margin: 0;
     }
     .googlemap {
@@ -483,4 +556,40 @@ const googleMapSrc = `https://maps.google.co.jp/maps?output=embed&q=${store.acf.
         }
     }
 
+    .store-image {
+      display: grid;
+      grid-template: "image1 image2" auto
+    "image3 image2" auto
+    / .55fr .45fr;
+      gap: var(--space-x8);
+      margin-top: var(--space-x10);
+    }
+    .store-image__figure {
+      aspect-ratio: 1;
+      height: auto;
+      margin: 0;
+      opacity: 0;
+      box-shadow: 0px 3px 3px rgba(0,0,0,.4), 0px 8px 8px rgba(0,0,0,.15);
+      &:nth-of-type(1) {
+        grid-area: image1;
+        width: calc(100% / 0.55 * 0.45);
+        transform: translateX(-25%);
+      }
+      &:nth-of-type(2) {
+        grid-area: image2;
+        align-self: center;
+        transform: translateX(25%);
+      }
+      &:nth-of-type(3) {
+        grid-area: image3;
+        width: calc(100% / 0.55 * 0.45);
+        margin-left: auto;
+        transform: translateX(-25%);
+      }
+    }
+    .store-image__image {
+      object-fit: cover;
+      width: 100%;
+      height: 100%;
+    }
   </style>

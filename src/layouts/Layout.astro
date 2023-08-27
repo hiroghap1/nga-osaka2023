@@ -2,6 +2,7 @@
 import ProductOnly from '../components/ProductOnly.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import Lightbox from '@julian_cataldo/astro-lightbox/Lightbox.astro';
 
 interface Props {
 	title: string;
@@ -47,6 +48,7 @@ console.log();
 				})(window,document,'script','dataLayer', GTMKey);
 			</script>
 		</ProductOnly>
+		<Lightbox />
 	</head>
 	<body>
 	<ProductOnly>
@@ -131,4 +133,8 @@ console.log();
 	 .u-display-block {
 		 display: block!important;
 	 }
+	.app-lightbox>.portal {
+		padding: var(--space-x5);
+	}
+
 </style>
