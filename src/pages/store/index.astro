@@ -1,0 +1,220 @@
+---
+import Layout from '@src/layouts/Layout.astro';
+import { Image, Picture } from '@astrojs/image/components';
+import DisplayComponents from '@src/components/DisplayComponents.astro';
+
+type store = {
+  link: string;
+  title: {
+    rendered: string;
+  };
+  content: {
+    rendered: string;
+  }
+  acf: {
+    store_number: string,
+    store_name: string,
+    store_description: string,
+    sake_name: string,
+    sake_company: string,
+    sake_description: string,
+    store_address1: string,
+    store_address2: string,
+    store_tel: string,
+    event_start: string,
+    event_end: string,
+    capacity_sitting: number,
+    capacity_standing: number,
+    appetizer_name: string,
+    appetizer_price1: number,
+    appetizer_image: string,
+    sake_service: string,
+    sake_pref: string,
+    store_url: string,
+    store_image1: undefined | {
+      url: string,
+      width: string,
+      height: string,
+      mime_type: string
+    },
+    store_image2: undefined | {
+      url: string,
+      width: string,
+      height: string,
+      mime_type: string
+    },
+    store_image3: undefined | {
+      url: string,
+      width: string,
+      height: string,
+      mime_type: string
+    },
+    store_zip: string,
+    lat: string,
+    lng: string,
+    map_name: string,
+    googlemap_fix: string,
+    facebook_url: string,
+    twitter_url: string,
+    instagram_url: string,
+    store_station: string,
+    store_route: string,
+  },
+  _embedded: {
+    'wp:featuredmedia': [{
+      source_url: string,
+      media_details: {
+        width: string,
+        height: string,
+      }
+    }]
+  },
+  image: {
+    url: string,
+    width: string,
+    height: string,
+  }
+};
+
+const res = await fetch(`${import.meta.env.PUBLIC_API_URL}/store?per_page=100&order=asc&_embed`);
+const stores = await res.json();
+
+const taxonomy = await fetch(`${import.meta.env.PUBLIC_API_URL}/area?per_page=20`);
+const areas = await taxonomy.json();
+// console.log(areas);
+const areaList = {};
+
+areas.forEach(item => {
+  areaList[item.id] = item.name;
+});
+
+stores.forEach(store => {
+  store.image = {};
+  if(store['_embedded']['wp:featuredmedia']) {
+    store.image.url = store['_embedded']['wp:featuredmedia'][0]['source_url'];
+    // console.log(store['_embedded']['wp:featuredmedia'][0]);
+  } else {
+    store.image.width = '1920';
+    store.image.height = '1080';
+    store.image.url = 'https://data.nga-osaka.com/2023/wp-content/uploads/2023/08/preparation-image16-9.jpg';
+  }
+});
+---
+
+<Layout title="参加店舗一覧">
+  <main>
+    <h1><img src="/assets/images/storelist-heading.png" class="storelist-heading__image" alt="参加店舗一覧" width="948" height="851"></h1>
+    <div class="container">
+    <div class="store-list">
+      {
+        stores.map((store:any) => (
+                <article class="store-item" data-area={areaList[store.area]} data-open={store.acf.event_start} data-end={store.acf.event_end}>
+                  <a href={`/store/${store.slug}`} class="store-link">
+                    <figure class="store-figure">
+                      <img src={store.image.url} width={store.image.width} height={store.image.height} alt="" class="store-image" loading="lazy">
+                      <figcaption class="store-figcaption">{areaList[store.area]}</figcaption>
+                    </figure>
+                    <h2 class="store-title"><span class="store-number">{store.acf.store_number}</span>{store.title.rendered}<span class="store-price">{Number(store.acf.appetizer_price1).toLocaleString()}円</span></h2>
+                    <div class="store-content">
+                      <!--<p>{store.acf.appetizer_name}</p>-->
+                      <!--<p>{store.acf.sake_service}</p>-->
+                      <p><img src="/assets/images/icon-time.svg" width="18" height="18" alt="">{store.acf.event_start}〜{store.acf.event_end}</p>
+                      <p><img src="/assets/images/icon-seat.svg" width="18" height="18" alt="">立食 {store.acf.capacity_standing}名/着席 {store.acf.capacity_sitting}名/合計 {Number(store.acf.capacity_standing) + Number(store.acf.capacity_sitting)}名</p>
+                    </div>
+                  </a>
+                </article>
+        ))
+      }
+    </div>
+  </div>
+        </main>
+        </Layout>
+
+<script></script>
+
+<style lang="scss">
+  main {
+    padding-block: var(--space-x8);
+    background: url(/assets/images/store-bg.jpg);
+  }
+  .storelist-heading__image {
+    width: 200px;
+    margin-inline: auto;
+  }
+  .store-list {
+    display: grid;
+    gap: var(--space-x8) var(--space-x5);
+    @media (min-width: 576px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    @media (min-width: 768px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .store-link {
+    display: block;
+    height: 100%;
+    padding: 0 var(--space-x3) var(--space-x4);
+    background-color: #fff;
+    text-decoration: none;
+    color: var(--color-font);
+    filter: drop-shadow(0 3px 4px rgba(0,0,0,.2));
+    transition: filter .3s ease-in-out;
+    &:hover {
+      filter: drop-shadow(0 5px 7px rgba(0,0,0,.2));
+    }
+  }
+  .store-figure {
+    position: relative;
+    margin: 0 calc(var(--space-x3) * -1);
+  }
+  .store-image {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+  }
+  .store-figcaption {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    line-height: 1;
+    padding: var(--space-x2) var(--space-x3);
+    background-color: var(--color-sub-accent);
+    color: white;
+  }
+  .store-title {
+    display: grid;
+    align-items: center;
+    gap: var(--space-x1);
+    grid-template-columns: 1.7em 1fr max-content;
+    margin-block: var(--space-x2);
+    font-size: 16px;
+    line-height: 1.3;
+  }
+  .store-number {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 1.7em;
+    height: 1.7em;
+    padding-bottom: 2px;
+    border-radius: 50%;
+    background-color: var(--color-sub-accent);
+    color: white;
+  }
+  .store-price {
+    margin-left: auto;
+    padding-left: var(--space-x2);
+    font-size: 120%;
+  }
+  .store-content {
+    color: #666;
+    font-size: 14px;
+    &>p {
+      display: flex;
+      align-items: center;
+      gap: var(--space-x1);
+      margin: 0;
+    }
+  }
+</style>
