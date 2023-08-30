@@ -88,6 +88,12 @@ areas.forEach(item => {
   areaList[item.id] = item.name;
 });
 
+const areaNameList = areas
+  .sort((a, b) => a.id - b.id) // id順にソート
+  .map(item => item.name); // "name"を配列にマップ
+
+console.log(areaNameList);
+
 stores.forEach(store => {
   store.image = {};
   if(store['_embedded']['wp:featuredmedia']) {
@@ -105,11 +111,18 @@ stores.forEach(store => {
   <main>
     <h1><img src="/assets/images/storelist-heading.png" class="storelist-heading__image" alt="参加店舗一覧" width="948" height="851"></h1>
     <div class="container">
-    <div class="store-list">
+      <div class="filter-panel" style="display: none;">
+        {
+          areaNameList.map((areaName:string) => (
+            <label><input type="checkbox" name="area-filter">{areaName}</label>
+          ))
+        }
+      </div>
+    <div class="store-list" data-area="">
       {
         stores.map((store:any) => (
                 <article class="store-item" data-area={areaList[store.area]} data-open={store.acf.event_start} data-end={store.acf.event_end}>
-                  <a href={`/store/${store.slug}`} class="store-link">
+                  <a href={`/store/${store.slug}`} class="store-link" data-canceled={store.acf.store_canceled}>
                     <figure class="store-figure">
                       <img src={store.image.url} width={store.image.width} height={store.image.height} alt="" class="store-image" loading="lazy">
                       <figcaption class="store-figcaption">{areaList[store.area]}</figcaption>
@@ -141,6 +154,12 @@ stores.forEach(store => {
     width: 200px;
     margin-inline: auto;
   }
+  .filter-panel {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    background-color: #fff;
+    padding: var(--space-x4);
+  }
   .store-list {
     display: grid;
     gap: var(--space-x8) var(--space-x5);
@@ -162,6 +181,36 @@ stores.forEach(store => {
     transition: filter .3s ease-in-out;
     &:hover {
       filter: drop-shadow(0 5px 7px rgba(0,0,0,.2));
+    }
+    &[data-canceled="中止"] {
+      position: relative;
+      &::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        display: block;
+        background-color:rgba(0,0,0,.4);
+        z-index: 1;
+      }
+      &::after {
+        content: '出店中止';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        padding: 2px .5em;
+        border-radius: 5px;
+        border: 3px solid;
+        background-color: rgba(255,255,255,.85);
+        font-weight: bold;
+        font-size: 110%;
+        letter-spacing: .2em;
+        color: var(--color-danger);
+        transform: translate(-50%, -50%);
+        z-index: 2;
+      }
+      &:hover {
+        filter: drop-shadow(0 3px 4px rgba(0,0,0,.2));
+      }
     }
   }
   .store-figure {

@@ -186,7 +186,7 @@ const sakeService = store.acf.sake_service ? `${store.acf.sake_service}[${store.
 ---
 
 <Layout title={ store.title.rendered }>
-  <main>
+  <main data-canceled={store.acf.store_canceled}>
     <div class="store-visual">
       <img src="/assets/images/tokkuri-tokyo.png" class="store-visual__tokkuri-image" width="721" height="1249" alt="">
       <img src={eyeCatch.source_url} alt={store.acf.store_name} class="store-visual__image" width={eyeCatch.media_details.width} height={eyeCatch.media_details.height} decoding="async">
@@ -387,6 +387,41 @@ const sakeService = store.acf.sake_service ? `${store.acf.sake_service}[${store.
 
     main {
         background: url(/assets/images/section-store-bg.jpg);
+      &[data-canceled="中止"] {
+        & > .store-visual {
+          position: relative;
+
+          &::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            display: block;
+            background-color: rgba(0, 0, 0, .4);
+            z-index: 1;
+          }
+
+          &::after {
+            content: '出店中止';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            padding: var(--space-x2) var(--space-x8) calc(var(--space-x2) + 4px);
+            border-radius: 10px;
+            border: 3px solid;
+            background-color: rgba(255, 255, 255, .85);
+            font-weight: bold;
+            font-size: 200%;
+            color: var(--color-danger);
+            transform: translate(-50%, -50%);
+            letter-spacing: .2em;
+            z-index: 2;
+          }
+
+          &:hover {
+            background-size: 0%;
+          }
+        }
+      }
     }
   .store-visual {
       position: relative;

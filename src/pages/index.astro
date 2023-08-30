@@ -136,6 +136,7 @@ const stores = await res.json();
 					</h3>
 					<div class="box-contents__inner">
 						<ul>
+							<li>2023.08.30 「（39）小料理屋 en to jyo」は出店中止となりました。</li>
 							<li>2023.08.27 参加店舗の画像を公開しました。振る舞い酒の都道府県を修正しました。</li>
 							<li>2023.08.25 参加店舗ページを公開しました。</li>
 							<li>2023.08.13 日本酒ゴーアラウンド2023 大阪公式サイトオープンしました。</li>
@@ -159,7 +160,7 @@ const stores = await res.json();
 			<ul class="store-list" role="list">
 				{
 					stores.map((store:any) => (
-						<li class="store-item"><a href={`/store/${store.slug}`} class="store-link"><span class="store-number">{store.acf.store_number}</span>{store.title.rendered}</a></li>
+						<li class="store-item"><a href={`/store/${store.slug}`} class="store-link" data-canceled={store.acf.store_canceled}><span class="store-number">{store.acf.store_number}</span>{store.title.rendered}</a></li>
 					))
 				}
 			</ul>
@@ -922,6 +923,34 @@ const stores = await res.json();
 		&:hover {
 			background-size: 100%;
 			transition: background-size .15s ease-in-out;
+		}
+		&[data-canceled="中止"] {
+			position: relative;
+			&::before {
+				content: '';
+				position: absolute;
+				inset: 0;
+				display: block;
+				background-color:rgba(0,0,0,.4);
+			}
+			&::after {
+				content: '出店中止';
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				padding: 2px .5em;
+				border-radius: 5px;
+				border: 3px solid;
+				background-color: rgba(255,255,255,.85);
+				font-weight: bold;
+				font-size: 110%;
+				letter-spacing: .2em;
+				color: var(--color-danger);
+				transform: translate(-50%, -50%);
+			}
+			&:hover {
+				background-size: 0%;
+			}
 		}
 	}
 	.store-number {
