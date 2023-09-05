@@ -74,10 +74,9 @@ type store = {
     width: string,
     height: string,
   }
-  station: string,
 };
 
-const res = await fetch(`${import.meta.env.PUBLIC_API_URL}/store?per_page=100&order=asc&_embed`);
+const res = await fetch(`${import.meta.env.PUBLIC_API_URL}/liquor-shop?per_page=100&order=asc&_embed`);
 const stores = await res.json();
 
 const taxonomy = await fetch(`${import.meta.env.PUBLIC_API_URL}/area?per_page=20`);
@@ -105,37 +104,26 @@ stores.forEach(store => {
     store.image.height = '1080';
     store.image.url = 'https://data.nga-osaka.com/2023/wp-content/uploads/2023/08/preparation-image16-9.jpg';
   }
-  store.station = store.acf.store_station.includes('駅') ? store.acf.store_station : store.acf.store_station + '駅';
 });
 ---
 
-<Layout title="参加店舗一覧">
+<Layout title="協力酒販店店舗一覧">
   <main>
-    <h1><img src="/assets/images/storelist-heading.png" class="storelist-heading__image" alt="参加店舗一覧" width="948" height="851"></h1>
+    <h1><img src="/assets/images/liquor-shoplist-heading.png" class="storelist-heading__image" alt="協力酒販店一覧" width="948" height="851"></h1>
     <div class="container">
-      <div class="filter-panel" style="display: none;">
-        {
-          areaNameList.map((areaName:string) => (
-            <label><input type="checkbox" name="area-filter">{areaName}</label>
-          ))
-        }
-      </div>
     <div class="store-list" data-area="">
       {
         stores.map((store:any) => (
-                <article class="store-item" data-area={areaList[store.area]} data-open={store.acf.event_start} data-end={store.acf.event_end}>
-                  <a href={`/store/${store.slug}`} class="store-link" data-canceled={store.acf.store_canceled}>
+                <article class="store-item" data-area={areaList[store.area]}>
+                  <a href={`/liquor-shop/${store.slug}`} class="store-link" data-canceled={store.acf.store_canceled}>
                     <figure class="store-figure">
                       <img src={store.image.url} width={store.image.width} height={store.image.height} alt="" class="store-image" loading="lazy">
                       <figcaption class="store-figcaption">{areaList[store.area]}</figcaption>
                     </figure>
-                    <h2 class="store-title"><span class="store-number">{store.acf.store_number}</span>{store.title.rendered}<span class="store-price">{Number(store.acf.appetizer_price1).toLocaleString()}円</span></h2>
+                    <h2 class="store-title"><span class="store-number">{store.acf['liquor-shop_number']}</span>{store.title.rendered}</h2>
                     <div class="store-content">
                       <!--<p>{store.acf.appetizer_name}</p>-->
                       <!--<p>{store.acf.sake_service}</p>-->
-                      <p><img src="/assets/images/icon-time.svg" width="18" height="18" alt="">{store.acf.event_start}〜{store.acf.event_end}</p>
-                      <p><img src="/assets/images/icon-seat.svg" width="18" height="18" alt="">立食 {store.acf.capacity_standing}名/着席 {store.acf.capacity_sitting}名/合計 {Number(store.acf.capacity_standing) + Number(store.acf.capacity_sitting)}名</p>
-                      <p><img src="/assets/images/icon-train.svg" width="18" height="18" alt="">{store.station}</p>
                     </div>
                   </a>
                 </article>
@@ -231,14 +219,14 @@ stores.forEach(store => {
     bottom: 0;
     line-height: 1;
     padding: var(--space-x2) var(--space-x3);
-    background-color: var(--color-sub-accent);
+    background-color: var(--color-secondary);
     color: white;
   }
   .store-title {
     display: grid;
     align-items: center;
     gap: var(--space-x1);
-    grid-template-columns: 1.7em 1fr max-content;
+    grid-template-columns: 2em 1fr max-content;
     margin-block: var(--space-x2);
     font-size: 16px;
     line-height: 1.3;
@@ -247,11 +235,11 @@ stores.forEach(store => {
     display: inline-flex;
     justify-content: center;
     align-items: center;
-    min-width: 1.7em;
+    min-width: 100%;
     height: 1.7em;
     padding-bottom: 2px;
-    border-radius: 50%;
-    background-color: var(--color-sub-accent);
+    border-radius: 5px;
+    background-color: var(--color-secondary);
     color: white;
   }
   .store-price {
