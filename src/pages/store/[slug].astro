@@ -61,6 +61,7 @@ type Post = {
     instagram_url: string,
     store_station: string,
     store_route: string,
+    store_in_charge: {}
   },
   _embedded: {
     'wp:featuredmedia': [{
@@ -86,67 +87,22 @@ export async function getStaticPaths() {
     }
   ))
 }
-const author = {
-  2: {
-    name: '深井中野酒本店',
-    slug: 'fukainakano',
-  },
-  3: {
-    name: '酒屋へちかん',
-    slug: 'hechikan',
-  },
-  4: {
-    name: '井上酒店',
-    slug: 'inoue',
-  },
-  5: {
-    name: '日本酒セラーHARETOKE',
-    slug: 'haretoke',
-  },
-  6: {
-    name: 'SAKEBOXさかした',
-    slug: 'sakashita',
-  },
-  7: {
-    name: '酒蔵なかやま',
-    slug: 'nakayama',
-  },
-  8: {
-    name: '酒やのまえだ',
-    slug: 'maeda',
-  },
-  9: {
-    name: '山中酒の店',
-    slug: 'yamanaka',
-  },
-  10: {
-    name: '杉本商店',
-    slug: 'sugimoto',
-  },
-  11: {
-    name: '十徳日本酒販売所',
-    slug: 'juttoku',
-  },
-  12: {
-    name: 'いなごや酒店',
-    slug: 'inagoya',
-  },
-  13: {
-    name: '酒のはしもと',
-    slug: 'hashimoto',
-  },
-  14: {
-    name: '今仲酒店',
-    slug: 'inamanaka',
-  },
-  15: {
-    name: '生島商店',
-    slug: 'ikushima',
-  },
-  16: {
-    name: '木になる酒店 tane',
-    slug: 'tane',
-  }
+const storeInCharge = {
+  A: 'maeda',
+  B: 'sugimoto',
+  C: 'nakayama',
+  D: 'haretoke',
+  E: 'inoue',
+  F: 'sakashita',
+  G: 'yamanaka',
+  H: 'hechikan',
+  I: 'juttoku',
+  J: 'inagoya',
+  K: 'fukai-nakano',
+  L: 'imanaka',
+  M: 'ikushima',
+  N: 'hashimoto',
+  O: 'tane',
 }
 const store = Astro.props.post;
 console.log(store);
@@ -183,6 +139,8 @@ const storeImage3Height = store.acf.store_image3 ? store.acf.store_image3.height
 const storeImage3MimeType = store.acf.store_image3 ? store.acf.store_image3.mime_type.split('/')[1] : 'jpeg';
 
 const sakeService = store.acf.sake_service ? `${store.acf.sake_service}[${store.acf.sake_pref}]` : `${store.acf.sake_name}[${store.acf.sake_pref}]`;
+console.log(store.acf.store_in_charge);
+const liquorShopURL = `/liquor-shop/${storeInCharge[store.acf.store_in_charge.value]}`;
 ---
 
 <Layout title={ store.title.rendered }>
@@ -301,7 +259,7 @@ const sakeService = store.acf.sake_service ? `${store.acf.sake_service}[${store.
           </div>
           <div class="store-spec__group">
             <dt class="store-spec__term">担当酒販店</dt>
-            <dd class="store-spec__description">{author[store.author].name}</dd>
+            <dd class="store-spec__description"><a href={liquorShopURL} class="liquor-shop__link"><span class="liquor-shop__number">{store.acf.store_in_charge.value}</span>{store.acf.store_in_charge.label}</a></dd>
           </div>
         </dl>
       </section>
@@ -626,5 +584,24 @@ const sakeService = store.acf.sake_service ? `${store.acf.sake_service}[${store.
       object-fit: cover;
       width: 100%;
       height: 100%;
+    }
+    .liquor-shop__link {
+      color: var(--color-secondary);
+      text-decoration: none;
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+    .liquor-shop__number {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      min-width: 2em;
+      height: 1.7em;
+      margin-right: var(--space-x2);
+      border-radius: 5px;
+      background-color: var(--color-secondary);
+      font-weight: bold;
+      color: white;
     }
   </style>

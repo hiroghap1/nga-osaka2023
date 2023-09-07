@@ -79,6 +79,7 @@ type store = {
 
 const res = await fetch(`${import.meta.env.PUBLIC_API_URL}/store?per_page=100&order=asc&_embed`);
 const stores = await res.json();
+stores.sort((a, b) => a.acf.store_number - b.acf.store_number);
 
 const taxonomy = await fetch(`${import.meta.env.PUBLIC_API_URL}/area?per_page=20`);
 const areas = await taxonomy.json();
