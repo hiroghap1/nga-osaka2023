@@ -114,17 +114,23 @@ stores.forEach(store => {
   <main>
     <h1><img src="/assets/images/storelist-heading.png" class="storelist-heading__image" alt="参加店舗一覧" width="948" height="851"></h1>
     <div class="container">
-      <div class="filter-panel" style="display: none;">
-        {
-          areaNameList.map((areaName:string) => (
-            <label><input type="checkbox" name="area-filter">{areaName}</label>
-          ))
-        }
+      <div class="filter-panel" style="display: grid;">
+        <div class="filter-panel__checks">
+          {
+            areaNameList.map((areaName:string) => (
+                    <label class="filter-area__label"><input type="checkbox" name="area-filter" class="filter-area__input" value={areaName} checked>{areaName}</label>
+            ))
+          }
+        </div>
+        <div class="filter-area__buttons">
+          <button type="button" id="button-areas-check" class="filter-area__button">すべてチェック</button>
+          <button type="button" id="button-areas-discheck" class="filter-area__button">すべて外す</button>
+        </div>
       </div>
-    <div class="store-list" data-area="">
+    <div id="store-list" class="store-list" data-area={areaNameList.join(',')}>
       {
         stores.map((store:any) => (
-                <article class="store-item" data-area={areaList[store.area]} data-open={store.acf.event_start} data-end={store.acf.event_end}>
+                <article class="store-item" data-area={areaList[store.area]} data-open={store.acf.event_start} data-end={store.acf.event_end} data-display="true">
                   <a href={`/store/${store.slug}`} class="store-link" data-canceled={store.acf.store_canceled}>
                     <figure class="store-figure">
                       <img src={store.image.url} width={store.image.width} height={store.image.height} alt="" class="store-image" loading="lazy">
@@ -147,7 +153,41 @@ stores.forEach(store => {
         </main>
         </Layout>
 
-<script></script>
+<script>
+const areaFilters = document.querySelectorAll('[name="area-filter"]');
+const storeList = document.getElementById('store-list');
+const storeItems = document.querySelectorAll('.store-item');
+const buttonAreasCheck = document.getElementById('button-areas-check');
+const buttonAreasDisCheck = document.getElementById('button-areas-discheck');
+console.log(storeList.dataset.area.split(','));
+const areaChecked = [];
+areaFilters.forEach(areaFilter => {
+  areaFilter.addEventListener('click', ()=>{
+      storeItems.forEach(storeItem =>{
+        if(storeItem.dataset.area === areaFilter.value) {
+          storeItem.dataset.display = areaFilter.checked;
+        }
+      });
+    console.log(areaFilter.value);
+  });
+});
+buttonAreasCheck.addEventListener('click',()=> {
+  areaFilters.forEach(areaFilter => {
+    areaFilter.checked = true;
+  });
+  storeItems.forEach(storeItem =>{
+      storeItem.dataset.display = true;
+  });
+});
+buttonAreasDisCheck.addEventListener('click',()=> {
+  areaFilters.forEach(areaFilter => {
+    areaFilter.checked = false;
+  });
+  storeItems.forEach(storeItem =>{
+    storeItem.dataset.display = false;
+  });
+});
+</script>
 
 <style lang="scss">
   main {
@@ -159,14 +199,46 @@ stores.forEach(store => {
     margin-inline: auto;
   }
   .filter-panel {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     background-color: #fff;
     padding: var(--space-x4);
+  }
+  .filter-panel__checks {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+  .filter-area__label {
+    padding: var(--space-x1);
+    cursor: pointer;
+  }
+  .filter-area__buttons {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: var(--space-x2);
+  }
+  .filter-area__button {
+    padding: var(--space-x2) var(--space-x3);
+    border: 0;
+    border-radius: 3px;
+    background-color: transparent;
+    cursor: pointer;
+    transition: .3s background-color ease-in-out;
+    &:nth-of-type(1) {
+      color: var(--color-accent);
+      &:hover {
+        background-color: #4BA09519;
+      }
+    }
+    &:nth-of-type(2) {
+      color: #666;
+      &:hover {
+        background-color: #eee;
+      }
+    }
   }
   .store-list {
     display: grid;
     gap: var(--space-x8) var(--space-x5);
+    margin-top: var(--space-x8);
     @media (min-width: 576px) {
       grid-template-columns: repeat(2, 1fr);
     }
@@ -186,7 +258,7 @@ stores.forEach(store => {
     &:hover {
       filter: drop-shadow(0 5px 7px rgba(0,0,0,.2));
     }
-    &[data-canceled="中止"] {
+    &[data-canceled="true"] {
       position: relative;
       &::before {
         content: '';
@@ -215,6 +287,12 @@ stores.forEach(store => {
       &:hover {
         filter: drop-shadow(0 3px 4px rgba(0,0,0,.2));
       }
+    }
+  }
+  .store-item {
+    display: none;
+    &[data-display="true"] {
+      display: block;
     }
   }
   .store-figure {
