@@ -204,7 +204,13 @@ buttonAreasDisCheck.addEventListener('click',()=> {
   }
   .filter-panel__checks {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+    @media (min-width: 480px) {
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    }
+    @media (min-width: 768px) {
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
   }
   .filter-area__label {
     padding: var(--space-x1);
