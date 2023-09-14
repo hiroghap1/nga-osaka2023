@@ -1,7 +1,6 @@
 ---
 
 import Layout from '../../layouts/Layout.astro';
-import { Image, Picture } from '@astrojs/image/components';
 import Lightbox from '@julian_cataldo/astro-lightbox/Lightbox.astro';
 import DisplayComponents from '@src/components/DisplayComponents.astro';
 
@@ -86,17 +85,17 @@ const storeImage3MimeType = store.acf.store_image3 ? store.acf.store_image3.mime
       <div class="store-image section">
         <DisplayComponents image={store.acf['liquor-shop_image1']}>
           <figure class="store-image__figure" data-lightbox="true">
-            <Image src={storeImage1Url} alt="" class="store-image__image" width={storeImage1Width} height={storeImage1Height} format={storeImage1MimeType} />
+            <img src={storeImage1Url} alt="" class="store-image__image" width={storeImage1Width} height={storeImage1Height} format={storeImage1MimeType} />
           </figure>
         </DisplayComponents>
         <DisplayComponents image={store.acf['liquor-shop_image2']}>
           <figure class="store-image__figure" data-lightbox="true">
-            <Image src={storeImage2Url} alt="" class="store-image__image" width={storeImage2Width} height={storeImage2Height} format={storeImage2MimeType} />
+            <img src={storeImage2Url} alt="" class="store-image__image" width={storeImage2Width} height={storeImage2Height} format={storeImage2MimeType} />
           </figure>
         </DisplayComponents>
         <DisplayComponents image={store.acf['liquor-shop_image3']}>
           <figure class="store-image__figure" data-lightbox="true">
-            <Image src={storeImage3Url} alt="" class="store-image__image" width={storeImage3Width} height={storeImage3Height} format={storeImage3MimeType} />
+            <img src={storeImage3Url} alt="" class="store-image__image" width={storeImage3Width} height={storeImage3Height} format={storeImage3MimeType} />
           </figure>
         </DisplayComponents>
       </div>

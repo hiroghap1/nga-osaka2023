@@ -1,6 +1,5 @@
 ---
 import Layout from '@src/layouts/Layout.astro';
-import { Image, Picture } from '@astrojs/image/components';
 import Lightbox from '@julian_cataldo/astro-lightbox/Lightbox.astro';
 import DisplayComponents from '@src/components/DisplayComponents.astro';
 
@@ -138,19 +137,21 @@ const storeImage3Width = store.acf.store_image3 ? store.acf.store_image3.width :
 const storeImage3Height = store.acf.store_image3 ? store.acf.store_image3.height : '1';
 const storeImage3MimeType = store.acf.store_image3 ? store.acf.store_image3.mime_type.split('/')[1] : 'jpeg';
 
+const appetizerImageUrl = store.acf.appetizer_image ? store.acf.appetizer_image : notFoundImage1;
+
 const sakeService = store.acf.sake_service ? `${store.acf.sake_service}[${store.acf.sake_pref}]` : `${store.acf.sake_name}[${store.acf.sake_pref}]`;
-console.log(store.acf.store_in_charge);
+console.log(appetizerImageUrl);
 const liquorShopURL = `/liquor-shop/${storeInCharge[store.acf.store_in_charge.value]}`;
 ---
 
 <Layout title={ store.title.rendered }>
   <main data-canceled={store.acf.store_canceled}>
-    <div class="store-visual">
+    <div class="store-visual store-figure">
       <img src="/assets/images/tokkuri-tokyo.png" class="store-visual__tokkuri-image" width="721" height="1249" alt="">
       <img src={eyeCatch.source_url} alt={store.acf.store_name} class="store-visual__image" width={eyeCatch.media_details.width} height={eyeCatch.media_details.height} decoding="async">
     </div>
     <div class="container">
-      <h1><span set:html={store.acf.store_number} />{store.title.rendered}</h1>
+      <h1 transition:name="title"><span set:html={store.acf.store_number} />{store.title.rendered}</h1>
       <p set:html={store.content.rendered} />
       <section>
         <div class="store-decriptionBox">
@@ -189,17 +190,17 @@ const liquorShopURL = `/liquor-shop/${storeInCharge[store.acf.store_in_charge.va
       <div class="store-image section">
         <DisplayComponents image={store.acf.store_image1}>
           <figure class="store-image__figure" data-lightbox="true">
-            <Image src={storeImage1Url} alt="" class="store-image__image" width={storeImage1Width} height={storeImage1Height} format={storeImage1MimeType} />
+            <img src={storeImage1Url} alt="" class="store-image__image" width={storeImage1Width} height={storeImage1Height} format={storeImage1MimeType} />
           </figure>
         </DisplayComponents>
         <DisplayComponents image={store.acf.store_image2}>
           <figure class="store-image__figure" data-lightbox="true">
-            <Image src={storeImage2Url} alt="" class="store-image__image" width={storeImage2Width} height={storeImage2Height} format={storeImage2MimeType} />
+            <img src={storeImage2Url} alt="" class="store-image__image" width={storeImage2Width} height={storeImage2Height} format={storeImage2MimeType} />
           </figure>
         </DisplayComponents>
         <DisplayComponents image={store.acf.store_image3}>
           <figure class="store-image__figure" data-lightbox="true">
-            <Image src={storeImage3Url} alt="" class="store-image__image" width={storeImage3Width} height={storeImage3Height} format={storeImage3MimeType} />
+            <img src={storeImage3Url} alt="" class="store-image__image" width={storeImage3Width} height={storeImage3Height} format={storeImage3MimeType} />
           </figure>
         </DisplayComponents>
       </div>
@@ -207,7 +208,13 @@ const liquorShopURL = `/liquor-shop/${storeInCharge[store.acf.store_in_charge.va
         <dl class="store-spec">
           <div class="store-spec__group">
             <dt class="store-spec__term">付け出し</dt>
-            <dd class="store-spec__description">{store.acf.appetizer_name}</dd>
+            <dd class="store-spec__description">
+              <DisplayComponents image={store.acf.appetizer_image}>
+                <figure class="store-appetizer__figure" data-lightbox="true">
+                  <img src={appetizerImageUrl} alt="" class="store-appetizer__image" />
+                </figure>
+              </DisplayComponents>
+              {store.acf.appetizer_name}</dd>
           </div>
           <div class="store-spec__group">
             <dt class="store-spec__term">料金</dt>
@@ -339,6 +346,17 @@ const liquorShopURL = `/liquor-shop/${storeInCharge[store.acf.store_in_charge.va
           }
         });
     });
+
+  gsap.to('.store-appetizer__figure',
+    {y:0,
+    opacity: 1,
+    duration: 0.7,
+      scrollTrigger: {
+        trigger: '.store-appetizer__figure',
+        start: 'top 80%',
+        end: 'bottom 20%',
+        toggleActions: 'play none none reverse',
+      }})
 </script>
 <style lang="scss">
     @use "sass:color";
@@ -580,7 +598,16 @@ const liquorShopURL = `/liquor-shop/${storeInCharge[store.acf.store_in_charge.va
         transform: translateX(-25%);
       }
     }
-    .store-image__image {
+    .store-appetizer__figure {
+      max-width: 200px;
+      aspect-ratio: 1;
+      height: auto;
+      margin: 0 0 var(--space-x4);
+      opacity: 0;
+      box-shadow: 0px 3px 3px rgba(0,0,0,.4), 0px 8px 8px rgba(0,0,0,.15);
+      }
+    .store-image__image,
+    .store-appetizer__image {
       object-fit: cover;
       width: 100%;
       height: 100%;
