@@ -3,6 +3,7 @@
 import Layout from '../../layouts/Layout.astro';
 import Lightbox from '@julian_cataldo/astro-lightbox/Lightbox.astro';
 import DisplayComponents from '@src/components/DisplayComponents.astro';
+import Card from '@src/components/Card.astro';
 
 
 const { slug } = Astro.params;
@@ -20,7 +21,39 @@ export async function getStaticPaths() {
 }
 
 const store = Astro.props.post;
-console.log(store);
+
+const shopRes = await fetch(`${import.meta.env.PUBLIC_API_URL}/store?per_page=100&order=asc&_embed`);
+const shopList = await shopRes.json();
+const manageShopList = shopList.filter(shop=>{
+  return store.title.rendered === shop.acf.store_in_charge.label;
+});
+
+// エリア設定
+const taxonomy = await fetch(`${import.meta.env.PUBLIC_API_URL}/area?per_page=20`);
+const areas = await taxonomy.json();
+// console.log(areas);
+const areaList = {};
+
+areas.forEach(item => {
+  areaList[item.id] = item.name;
+});
+// /エリア設定
+
+manageShopList.forEach(shop => {
+  shop.image = {};
+  if(shop['_embedded']['wp:featuredmedia']) {
+    shop.image.url = shop.acf.appetizer_image;
+    // shop.image.url = shop['_embedded']['wp:featuredmedia'][0]['source_url'];
+    // console.log(shop['_embedded']['wp:featuredmedia'][0]);
+  } else {
+    shop.image.width = '1920';
+    shop.image.height = '1080';
+    shop.image.url = 'https://data.nga-osaka.com/2023/wp-content/uploads/2023/08/preparation-image16-9.jpg';
+  }
+  shop.station = shop.acf.store_station.includes('駅') ? shop.acf.store_station : shop.acf.store_station + '駅';
+});
+
+// console.log(manageShopList);
 // console.log(store._embedded);
 const eyeCatch = store._embedded['wp:featuredmedia'] ? store._embedded['wp:featuredmedia'][0]
   : {
@@ -127,6 +160,44 @@ const storeImage3MimeType = store.acf.store_image3 ? store.acf.store_image3.mime
           </div>
         </dl>
       </section>
+      <section class="section">
+        <h2 class="section__title">担当店舗一覧</h2>
+        <div class="store-list" data-area="">
+          {
+            manageShopList.map((shop:any) => (
+             <Card
+             title = {shop.title.rendered}
+             number = {shop.acf.store_number}
+             href = {shop.slug},
+             open = {shop.acf.event_start},
+             end = {shop.acf.event_end},
+             area = {areaList[shop.area]},
+             canceled = {shop.acf.store_canceled},
+             image = {shop.image.url},
+             price = {Number(shop.acf.appetizer_price1)},
+             appetizer = {shop.acf.appetizer_name},
+             sake = {shop.acf.sake_service},
+             standing = {Number(shop.acf.capacity_standing)},
+             sitting = {Number(shop.acf.capacity_sitting)},
+             station = {shop.station},
+             taste = {shop.acf.sake_taste},
+             flavor = {shop.acf.sake_flavor},
+             />
+            ))
+          }
+        </div>
+      </section>
+      <section class="section section-chart">
+        <h2 class="section__title">振る舞い酒分布図</h2>
+        <div class="sake-chart-wrapper">
+          <canvas id="sake-chart" class="sake-chart">
+          </canvas>
+          <div class="sale-label label-right">味が濃厚</div>
+          <div class="sale-label label-left">味が淡麗</div>
+          <div class="sale-label label-top">香りが高い</div>
+          <div class="sale-label label-bottom">香りが穏やか</div>
+        </div>
+      </section>
     </div>
   </main>
 </Layout>
@@ -135,6 +206,7 @@ const storeImage3MimeType = store.acf.store_image3 ? store.acf.store_image3.mime
   import gsap from 'gsap';
   import { ScrollTrigger } from "gsap/ScrollTrigger";
   import { CustomEase } from "gsap/CustomEase";
+  import { Chart } from 'chart.js/auto';
 
   gsap.registerPlugin(CustomEase);
   gsap.registerPlugin(ScrollTrigger);
@@ -203,6 +275,61 @@ const storeImage3MimeType = store.acf.store_image3 ? store.acf.store_image3.mime
           }
         });
     });
+
+  const storeList = document.querySelectorAll('.store-item');
+  console.log(storeList);
+  const dataSakeList = [];
+  storeList.forEach(store => {
+    const canceled = store.querySelector('.store-link').dataset.canceled;
+    if(canceled === 'true') {return false}
+    const sake = {
+      x: 0,
+      y: 0,
+      label: store.dataset.title,
+    }
+    sake.x = store.dataset.taste;
+    sake.y = store.dataset.flavor;
+    dataSakeList.push(sake);
+  });
+
+  console.log(dataSakeList);
+
+  const sakeChartElement = document.getElementById('sake-chart');
+  const sakeChart = new Chart(sakeChartElement, {
+    type: "scatter",
+    data: {
+      labels: ['香り'],
+      datasets: [{
+        label: '振る舞い酒分布図',
+        data: dataSakeList,
+        backgroundColor: '#f88',
+      }],
+    },
+    options: {
+      scales: {
+        y: {
+          suggestedMin: -10,
+          suggestedMax: 10,
+          ticks: {
+            display: false
+          },
+        },
+        x: {
+          suggestedMin: -10,
+          suggestedMax: 10,
+          ticks: {
+            display: false
+          },
+        },
+      },
+      title: {
+        display: false,
+      },
+      ticks: {
+        stepSize: 1,
+      },
+    },
+  });
 </script>
 <style lang="scss">
   @use "sass:color";
@@ -448,5 +575,76 @@ const storeImage3MimeType = store.acf.store_image3 ? store.acf.store_image3.mime
     object-fit: cover;
     width: 100%;
     height: 100%;
+  }
+  .sake-chart {
+    padding: var(--space-x3) var(--space-x4);
+    background-color: #fff;
+  }
+  .section__title {
+    position: relative;
+    width: max-content;
+    margin-inline: auto;
+    padding: var(--space-x2) var(--space-x5);
+    background-color: var(--color-secondary);
+    background-image: linear-gradient(-90deg, var(--color-secondary) 0%, color.scale(#70295E, $lightness: -25%) 80%, color.scale(#70295E, $lightness: -15%) 100%);
+    color: white;
+    z-index: 1;
+    &::before,
+    &::after {
+      content: '';
+      position: absolute;
+      top: 5px;
+      left: 5px;
+      width: 100%;
+      height: 100%;
+      border: 1px solid white;
+    }
+    &::after {
+      top: 6px;
+      left: 6px;
+      border-color: var(--color-secondary);
+    }
+  }
+  .sake-chart-wrapper {
+    position: relative;
+  }
+  .sale-label {
+    position: absolute;
+    inset: 0;
+    width: fit-content;
+    height: fit-content;
+    margin: auto;
+    padding: var(--space-x1);
+    background-color: rgba(255,255,255,.8);
+    font-weight: bold;
+    &.label-top {
+      margin-top: 0;
+      color: #6B9767;
+    }
+    &.label-right {
+      margin-right: 0;
+      writing-mode: vertical-rl;
+      color: #BD5D5D;
+    }
+    &.label-bottom {
+      margin-bottom: 0;
+      color: #4191B1;
+    }
+    &.label-left {
+      margin-left: 0;
+      writing-mode: vertical-rl;
+      color: #BF9E6C;
+    }
+  }
+  .store-list {
+    display: grid;
+    gap: var(--space-x8) var(--space-x5);
+    margin-top: var(--space-x8);
+    @media (min-width: 576px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    @media (min-width: 768px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
   }
 </style>

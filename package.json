@@ -12,6 +12,7 @@
   "dependencies": {
     "@julian_cataldo/astro-lightbox": "^0.10.11",
     "astro": "^3.0.12",
+    "chart.js": "^4.4.0",
     "p5": "^1.7.0"
   },
   "devDependencies": {

@@ -3,59 +3,168 @@ interface Props {
 	title: string;
 	body: string;
 	href: string;
+	number: string;
+	open: string;
+	end: string;
+	area: string;
+	canceled: boolean;
+	image: string;
+	price: number;
+	appetizer: string;
+	sake: string;
+	standing: number;
+	sitting: number;
+	station: string;
+	taste: number;
+	flavor: number;
 }
 
-const { href, title, body } = Astro.props;
+const {
+	title,
+	body,
+	href,
+	number,
+	open,
+	end,
+	area,
+	canceled,
+	image,
+	price,
+	appetizer,
+	sake,
+	standing,
+	sitting,
+	station,
+	taste,
+	flavor,
+} = Astro.props;
+
+console.log(Astro.props);
 ---
 
-<li class="link-card">
-	<a href={href}>
-		<h2>
-			{title}
-			<span>&rarr;</span>
-		</h2>
-		<p>
-			{body}
-		</p>
+<article class="store-item" data-area={area} data-open={open} data-end={end} data-display="true" data-taste={taste} data-flavor={flavor} data-title={title}>
+	<a href={`/store/${href}`} class="store-link" data-canceled={canceled}>
+		<figure class="store-figure">
+			<img src={image} width="1920" height="1080" alt="" class="store-image" loading="lazy">
+			<figcaption class="store-figcaption">{area}</figcaption>
+		</figure>
+		<h2 class="store-title" transition:name="title"><span class="store-number">{number}</span>{title}<span class="store-price">{Number(price).toLocaleString()}円</span></h2>
+		<div class="store-content">
+			<p class="store-content__appetizer"><img src="/assets/images/icon-food.svg" width="18" height="18" alt="">{appetizer}</p>
+			<p><img src="/assets/images/icon-sake.svg" width="18" height="18" alt="">{sake}</p>
+			<p><img src="/assets/images/icon-time.svg" width="18" height="18" alt="">{open}〜{end}</p>
+			<p><img src="/assets/images/icon-seat.svg" width="18" height="18" alt="">立食 {standing}名/着席 {sitting}名/合計 {standing + sitting}名</p>
+			<p><img src="/assets/images/icon-train.svg" width="18" height="18" alt="">{station}</p>
+		</div>
 	</a>
-</li>
+</article>
+
 <style>
-	.link-card {
-		list-style: none;
-		display: flex;
-		padding: 1px;
-		background-color: #23262d;
-		background-image: none;
-		background-size: 400%;
-		border-radius: 7px;
-		background-position: 100%;
-		transition: background-position 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-		box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
-	}
-	.link-card > a {
-		width: 100%;
+	.store-link {
+		display: block;
+		height: 100%;
+		padding: 0 var(--space-x3) var(--space-x4);
+		background-color: #fff;
 		text-decoration: none;
-		line-height: 1.4;
-		padding: calc(1.5rem - 1px);
-		border-radius: 8px;
+		color: var(--color-font);
+		filter: drop-shadow(0 3px 4px rgba(0,0,0,.2));
+		transition: filter .3s ease-in-out;
+		&:hover {
+			filter: drop-shadow(0 5px 7px rgba(0,0,0,.2));
+		}
+		&[data-canceled="true"] {
+			position: relative;
+			&::before {
+				content: '';
+				position: absolute;
+				inset: 0;
+				display: block;
+				background-color:rgba(0,0,0,.4);
+				z-index: 1;
+			}
+			&::after {
+				content: '出店中止';
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				padding: 2px .5em;
+				border-radius: 5px;
+				border: 3px solid;
+				background-color: rgba(255,255,255,.85);
+				font-weight: bold;
+				font-size: 110%;
+				letter-spacing: .2em;
+				color: var(--color-danger);
+				transform: translate(-50%, -50%);
+				z-index: 2;
+			}
+			&:hover {
+				filter: drop-shadow(0 3px 4px rgba(0,0,0,.2));
+			}
+		}
+	}
+	.store-item {
+		display: none;
+		&[data-display="true"] {
+			display: block;
+		}
+	}
+	.store-figure {
+		position: relative;
+		margin: 0 calc(var(--space-x3) * -1);
+	}
+	.store-image {
+		width: 100%;
+		aspect-ratio: 16 / 9;
+		object-fit: cover;
+	}
+	.store-figcaption {
+		position: absolute;
+		left: 0;
+		bottom: 0;
+		line-height: 1;
+		padding: var(--space-x2) var(--space-x3);
+		background-color: var(--color-sub-accent);
 		color: white;
-		background-color: #23262d;
-		opacity: 0.8;
 	}
-	h2 {
-		margin: 0;
-		font-size: 1.25rem;
-		transition: color 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+	.store-title {
+		display: grid;
+		align-items: center;
+		gap: var(--space-x1);
+		grid-template-columns: 1.7em 1fr max-content;
+		margin-block: var(--space-x2);
+		font-size: 16px;
+		line-height: 1.3;
 	}
-	p {
-		margin-top: 0.5rem;
-		margin-bottom: 0;
+	.store-number {
+		display: inline-flex;
+		justify-content: center;
+		align-items: center;
+		min-width: 1.7em;
+		height: 1.7em;
+		padding-bottom: 2px;
+		border-radius: 50%;
+		background-color: var(--color-sub-accent);
+		color: white;
 	}
-	.link-card:is(:hover, :focus-within) {
-		background-position: 0;
-		background-image: var(--accent-gradient);
+	.store-price {
+		margin-left: auto;
+		padding-left: var(--space-x2);
+		font-size: 120%;
 	}
-	.link-card:is(:hover, :focus-within) h2 {
-		color: rgb(var(--accent-light));
+	.store-content {
+		color: #666;
+		font-size: 14px;
+		&>p {
+			display: flex;
+			align-items: center;
+			gap: var(--space-x1);
+			margin: 6px 0 0;
+			line-height: 1.2;
+		}
+	}
+	.store-content__appetizer {
+		color: #444;
+		font-weight: bold;
 	}
 </style>
