@@ -13,10 +13,12 @@
     "@julian_cataldo/astro-lightbox": "^0.10.11",
     "astro": "^3.0.12",
     "chart.js": "^4.4.0",
+    "micromodal": "^0.4.10",
     "p5": "^1.7.0"
   },
   "devDependencies": {
     "@astrojs/partytown": "^1.2.3",
+    "@types/micromodal": "^0.3.3",
     "@types/p5": "^1.6.2",
     "gsap": "^3.12.2",
     "sass": "^1.65.1"
