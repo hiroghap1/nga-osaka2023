@@ -276,6 +276,13 @@ const storeImage3MimeType = store.acf.store_image3 ? store.acf.store_image3.mime
         });
     });
 
+  // 動作チェック中設定 パラーメーターchart=trueのときのみチャートを表示
+  const urlParams = new URLSearchParams(window.location.search);
+  const chartParam = urlParams.get('chart');
+  if (chartParam === 'true') {
+    const sectionChart = document.querySelector('.section-chart').style.display = 'block';
+  }
+
   const storeList = document.querySelectorAll('.store-item');
   // console.log(storeList);
   const dataSakeList = [];
@@ -345,7 +352,6 @@ const storeImage3MimeType = store.acf.store_image3 ? store.acf.store_image3.mime
     const {chart, tooltip} = context;
     const tooltipEl = getOrCreateTooltip(chart);
 
-    console.log(tooltipEl);
     // Hide if no tooltip
     if (tooltip.opacity === 0) {
       tooltipEl.style.opacity = 0;
@@ -353,7 +359,6 @@ const storeImage3MimeType = store.acf.store_image3 ? store.acf.store_image3.mime
       return;
     }
 
-    console.log(tooltip);
     // Set Text
     if (tooltip.body) {
       tooltipEl.innerHTML = `<a href="${tooltip.dataPoints[0]['raw']['slug']}" style="color:white;text-decoration:none;">${tooltip.dataPoints[0]['raw']['label']}</a>`;
@@ -376,7 +381,6 @@ const storeImage3MimeType = store.acf.store_image3 ? store.acf.store_image3.mime
         label: '振る舞い酒分布図',
         data: dataSakeList,
         pointStyle: dataPointList,
-        hoverBorderWidth: 2,
       }],
     },
     options: {
@@ -749,5 +753,8 @@ const storeImage3MimeType = store.acf.store_image3 ? store.acf.store_image3.mime
     @media (min-width: 768px) {
       grid-template-columns: repeat(3, 1fr);
     }
+  }
+  .section-chart {
+    display: none;
   }
 </style>
