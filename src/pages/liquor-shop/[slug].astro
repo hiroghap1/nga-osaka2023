@@ -133,6 +133,44 @@ const storeImage3MimeType = store.acf.store_image3 ? store.acf.store_image3.mime
         </DisplayComponents>
       </div>
       <section class="section">
+        <h2 class="section__title">担当店舗一覧</h2>
+        <div class="store-list" data-area="">
+          {
+            manageShopList.map((shop:any) => (
+                    <Card
+                            title = {shop.title.rendered}
+                            number = {shop.acf.store_number}
+                            href = {shop.slug},
+                            open = {shop.acf.event_start},
+                            end = {shop.acf.event_end},
+                            area = {areaList[shop.area]},
+                            canceled = {shop.acf.store_canceled},
+                            image = {shop.image.url},
+                            price = {Number(shop.acf.appetizer_price1)},
+                            appetizer = {shop.acf.appetizer_name},
+                            sake = {shop.acf.sake_service},
+                            standing = {Number(shop.acf.capacity_standing)},
+                            sitting = {Number(shop.acf.capacity_sitting)},
+                            station = {shop.station},
+                            taste = {shop.acf.sake_taste},
+                            flavor = {shop.acf.sake_flavor},
+                    />
+            ))
+          }
+        </div>
+      </section>
+      <section class="section section-chart">
+        <h2 class="section__title">振る舞い酒分布図</h2>
+        <div class="sake-chart-wrapper">
+          <canvas id="sake-chart" class="sake-chart">
+          </canvas>
+          <div class="sake-label label-right">味が濃厚</div>
+          <div class="sake-label label-left">味が淡麗</div>
+          <div class="sake-label label-top">香りが高い</div>
+          <div class="sake-label label-bottom">香りが穏やか</div>
+        </div>
+      </section>
+      <section class="section">
         <dl class="store-spec">
           <div class="store-spec__group">
             <dt class="store-spec__term">住所</dt>
@@ -159,44 +197,6 @@ const storeImage3MimeType = store.acf.store_image3 ? store.acf.store_image3.mime
             <dd class="store-spec__description"><ul class="sns-list" set:html={facebook + twitter + instagram} /></dd>
           </div>
         </dl>
-      </section>
-      <section class="section">
-        <h2 class="section__title">担当店舗一覧</h2>
-        <div class="store-list" data-area="">
-          {
-            manageShopList.map((shop:any) => (
-             <Card
-             title = {shop.title.rendered}
-             number = {shop.acf.store_number}
-             href = {shop.slug},
-             open = {shop.acf.event_start},
-             end = {shop.acf.event_end},
-             area = {areaList[shop.area]},
-             canceled = {shop.acf.store_canceled},
-             image = {shop.image.url},
-             price = {Number(shop.acf.appetizer_price1)},
-             appetizer = {shop.acf.appetizer_name},
-             sake = {shop.acf.sake_service},
-             standing = {Number(shop.acf.capacity_standing)},
-             sitting = {Number(shop.acf.capacity_sitting)},
-             station = {shop.station},
-             taste = {shop.acf.sake_taste},
-             flavor = {shop.acf.sake_flavor},
-             />
-            ))
-          }
-        </div>
-      </section>
-      <section class="section section-chart">
-        <h2 class="section__title">振る舞い酒分布図</h2>
-        <div class="sake-chart-wrapper">
-          <canvas id="sake-chart" class="sake-chart">
-          </canvas>
-          <div class="sale-label label-right">味が濃厚</div>
-          <div class="sale-label label-left">味が淡麗</div>
-          <div class="sale-label label-top">香りが高い</div>
-          <div class="sale-label label-bottom">香りが穏やか</div>
-        </div>
       </section>
     </div>
   </main>
@@ -277,35 +277,111 @@ const storeImage3MimeType = store.acf.store_image3 ? store.acf.store_image3.mime
     });
 
   const storeList = document.querySelectorAll('.store-item');
-  console.log(storeList);
+  // console.log(storeList);
   const dataSakeList = [];
+  const dataPointList = [];
   storeList.forEach(store => {
-    const canceled = store.querySelector('.store-link').dataset.canceled;
+    const storeLink = store.querySelector('.store-link');
+    const canceled = storeLink.dataset.canceled;
     if(canceled === 'true') {return false}
+    // データポイントを作成
     const sake = {
-      x: 0,
-      y: 0,
+      x: store.dataset.taste || 0,
+      y: store.dataset.flavor || 0,
       label: store.dataset.title,
+      slug: storeLink.href,
     }
-    sake.x = store.dataset.taste;
-    sake.y = store.dataset.flavor;
     dataSakeList.push(sake);
+
+    // 店番号のCanvas要素を生成
+    const canvas = document.createElement('canvas');
+    const size = 16;
+    canvas.width = size;
+    canvas.height = size;
+    const centerX = canvas.width / 2;
+    const context = canvas.getContext("2d");
+    context.fillStyle = "#1D2A82";
+    context.arc(centerX,canvas.height / 2, size / 2, 0, Math.PI * 2);
+    context.fill();
+
+    const text = store.dataset.number;
+    context.fillStyle = "#FFFFFF";
+    context.font = "10px Arial";
+    const textWidth = context.measureText(text).width;
+    const textX = centerX - textWidth / 2;
+    const textY = centerX + 3;
+    context.fillText(text, textX, textY);
+
+    dataPointList.push(canvas);
   });
 
-  console.log(dataSakeList);
+  // ツールチップカスタマイズ
+  const getOrCreateTooltip = (chart) => {
+    let tooltipEl = chart.canvas.parentNode.querySelector('.tooltip');
+
+    if (!tooltipEl) {
+      tooltipEl = document.createElement('div');
+      tooltipEl.classList.add('tooltip');
+      tooltipEl.style.background = '#1D2A82';
+      tooltipEl.style.borderRadius = '5px';
+      tooltipEl.style.color = 'white';
+      tooltipEl.style.opacity = 1;
+      tooltipEl.style.width = 'fit-content';
+      tooltipEl.style.position = 'absolute';
+      tooltipEl.style.fontSize = '12px';
+      tooltipEl.style.whiteSpace = 'nowrap';
+      tooltipEl.style.visibility = 'visible';
+      tooltipEl.style.transform = 'translate(-50%, 0)';
+      tooltipEl.style.transition = 'all .1s ease';
+
+      chart.canvas.parentNode.appendChild(tooltipEl);
+    }
+
+    return tooltipEl;
+  };
+
+  const externalTooltipHandler = (context) => {
+    // Tooltip Element
+    const {chart, tooltip} = context;
+    const tooltipEl = getOrCreateTooltip(chart);
+
+    console.log(tooltipEl);
+    // Hide if no tooltip
+    if (tooltip.opacity === 0) {
+      tooltipEl.style.opacity = 0;
+      tooltipEl.style.visibility = 'hidden';
+      return;
+    }
+
+    console.log(tooltip);
+    // Set Text
+    if (tooltip.body) {
+      tooltipEl.innerHTML = `<a href="${tooltip.dataPoints[0]['raw']['slug']}" style="color:white;text-decoration:none;">${tooltip.dataPoints[0]['raw']['label']}</a>`;
+    }
+    const {offsetLeft: positionX, offsetTop: positionY} = chart.canvas;
+
+    // Display, position, and set styles for font
+    tooltipEl.style.opacity = 1;
+    tooltipEl.style.visibility = 'visible';
+    tooltipEl.style.left = positionX + tooltip.caretX + 'px';
+    tooltipEl.style.top = positionY + tooltip.caretY + 'px';
+    tooltipEl.style.padding = tooltip.options.padding + 'px ' + tooltip.options.padding + 'px';
+  };
 
   const sakeChartElement = document.getElementById('sake-chart');
   const sakeChart = new Chart(sakeChartElement, {
     type: "scatter",
     data: {
-      labels: ['香り'],
       datasets: [{
         label: '振る舞い酒分布図',
         data: dataSakeList,
-        backgroundColor: '#f88',
+        pointStyle: dataPointList,
+        hoverBorderWidth: 2,
       }],
     },
     options: {
+      responsive: true,
+      maintainAspectRatio: false,
       scales: {
         y: {
           suggestedMin: -10,
@@ -327,6 +403,25 @@ const storeImage3MimeType = store.acf.store_image3 ? store.acf.store_image3.mime
       },
       ticks: {
         stepSize: 1,
+      },
+      plugins: {
+        legend: {
+          display: false,
+        },
+        tooltip: {
+          // caretPadding: 12,
+          // displayColors: false,
+          // backgroundColor: '#1D2A82',
+          // callbacks: {
+          //   label: function (context) {
+          //     console.log(context);
+          //     return `<a href="">${context.raw.label}</a>`;
+          //   },
+          // },
+          enabled: false,
+          position: 'nearest',
+          external: externalTooltipHandler
+        },
       },
     },
   });
@@ -492,6 +587,11 @@ const storeImage3MimeType = store.acf.store_image3 ? store.acf.store_image3.mime
     }
   }
 
+  .store-image {
+    margin-inline: calc(50% - 50vw);
+    padding-inline: calc(50vw - 50%);
+    overflow-x: hidden;
+  }
   .store-spec {
     margin: var(--space-x8) auto 0;
     //max-width: 800px;
@@ -576,10 +676,6 @@ const storeImage3MimeType = store.acf.store_image3 ? store.acf.store_image3.mime
     width: 100%;
     height: 100%;
   }
-  .sake-chart {
-    padding: var(--space-x3) var(--space-x4);
-    background-color: #fff;
-  }
   .section__title {
     position: relative;
     width: max-content;
@@ -605,10 +701,16 @@ const storeImage3MimeType = store.acf.store_image3 ? store.acf.store_image3.mime
       border-color: var(--color-secondary);
     }
   }
+  .sake-chart {
+    padding: var(--space-x3) var(--space-x4);
+  }
   .sake-chart-wrapper {
     position: relative;
+    padding: var(--space-x2);
+    background-color: #fff;
+    height: clamp(320px, 50vw, 520px);
   }
-  .sale-label {
+  .sake-label {
     position: absolute;
     inset: 0;
     width: fit-content;
@@ -617,6 +719,7 @@ const storeImage3MimeType = store.acf.store_image3 ? store.acf.store_image3.mime
     padding: var(--space-x1);
     background-color: rgba(255,255,255,.8);
     font-weight: bold;
+    line-height: 1;
     &.label-top {
       margin-top: 0;
       color: #6B9767;
