@@ -287,6 +287,20 @@ const storeImage3MimeType = store.acf.store_image3 ? store.acf.store_image3.mime
   // console.log(storeList);
   const dataSakeList = [];
   const dataPointList = [];
+
+  // データポイントの大きさ取得
+  const innerWidth = window.innerWidth;
+  let evenNumber;
+  if (innerWidth >= 1060) {
+    evenNumber = 30;
+  } else if (innerWidth >= 390) {
+    evenNumber = Math.floor(((innerWidth - 390) / (1060 - 390)) * (30 - 16) + 16);
+    if (evenNumber % 2 !== 0) {
+      evenNumber -= 1;
+    }  } else {
+    evenNumber = 16;
+  }
+
   storeList.forEach(store => {
     const storeLink = store.querySelector('.store-link');
     const canceled = storeLink.dataset.canceled;
@@ -302,7 +316,8 @@ const storeImage3MimeType = store.acf.store_image3 ? store.acf.store_image3.mime
 
     // 店番号のCanvas要素を生成
     const canvas = document.createElement('canvas');
-    const size = 16;
+    const size = evenNumber;
+    // const size = 16;
     canvas.width = size;
     canvas.height = size;
     const centerX = canvas.width / 2;
@@ -313,10 +328,10 @@ const storeImage3MimeType = store.acf.store_image3 ? store.acf.store_image3.mime
 
     const text = store.dataset.number;
     context.fillStyle = "#FFFFFF";
-    context.font = "10px Arial";
+    context.font = (evenNumber / 2 + 2) + "px Arial";
     const textWidth = context.measureText(text).width;
     const textX = centerX - textWidth / 2;
-    const textY = centerX + 3;
+    const textY = centerX + ((evenNumber / 2 + 2) / 3);
     context.fillText(text, textX, textY);
 
     dataPointList.push(canvas);
@@ -381,6 +396,7 @@ const storeImage3MimeType = store.acf.store_image3 ? store.acf.store_image3.mime
         label: '振る舞い酒分布図',
         data: dataSakeList,
         pointStyle: dataPointList,
+        pointRadius: evenNumber,
       }],
     },
     options: {

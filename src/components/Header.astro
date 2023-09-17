@@ -8,6 +8,11 @@ interface Props {
 const { href, title, body } = Astro.props;
 ---
 <header class="header">
+  <div class="menu">
+    <button type="button" id="menu-button" class="menu-button">
+      <img class="menu-button__image" src="" alt="メニューを開く">
+    </button>
+  </div>
   <nav class="nav">
     <ul class="main-nav__list">
       <li class="main-nav__item"><a href="/" class="main-nav__link"><img src="/assets/images/icon-home.svg" class="main-nav__image" alt="" width="24" height="24"><span class="main-nav__text">ホーム</span></a></li>
