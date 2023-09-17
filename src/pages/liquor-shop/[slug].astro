@@ -409,12 +409,30 @@ const storeImage3MimeType = store.acf.store_image3 ? store.acf.store_image3.mime
           ticks: {
             display: false
           },
+          grid: {
+            color: function(context) {
+              if (context.tick.value === 0) {
+                return '#aaaaaa';
+              } else {
+                return '#eeeeee';
+              }
+            },
+          },
         },
         x: {
           suggestedMin: -10,
           suggestedMax: 10,
           ticks: {
             display: false
+          },
+          grid: {
+            color: function(context) {
+              if (context.tick.value === 0) {
+                return '#aaaaaa';
+              } else {
+                return '#eeeeee';
+              }
+              },
           },
         },
       },
@@ -429,15 +447,6 @@ const storeImage3MimeType = store.acf.store_image3 ? store.acf.store_image3.mime
           display: false,
         },
         tooltip: {
-          // caretPadding: 12,
-          // displayColors: false,
-          // backgroundColor: '#1D2A82',
-          // callbacks: {
-          //   label: function (context) {
-          //     console.log(context);
-          //     return `<a href="">${context.raw.label}</a>`;
-          //   },
-          // },
           enabled: false,
           position: 'nearest',
           external: externalTooltipHandler
