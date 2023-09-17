@@ -14,28 +14,56 @@ const { href, title, body } = Astro.props;
       <li class="main-nav__item"><a href="/store" class="main-nav__link"><img src="/assets/images/icon-store.svg" class="main-nav__image" alt="" width="24" height="24"><span class="main-nav__text">参加店舗</span></a></li>
       <li class="main-nav__item"><a href="/liquor-shop" class="main-nav__link"><img src="/assets/images/icon-liquor.svg" class="main-nav__image" alt="" width="24" height="24"><span class="main-nav__text">協力酒販店</span></a></li>
       <li class="main-nav__item"><a href="/map" class="main-nav__link disabled"><img src="/assets/images/icon-map.svg" class="main-nav__image" alt="" width="24" height="24"><span class="main-nav__text">店舗地図</span></a></li>
-      <li class="main-nav__item"><button class="main-nav__link" data-micromodal-trigger="modal-history"><img src="/assets/images/icon-history.svg" class="main-nav__image" alt="" width="24" height="24"><span class="main-nav__text">過去のページ</span></button></li>
+      <li class="main-nav__item"><button class="main-nav__link" data-micromodal-trigger="modal-past"><img src="/assets/images/icon-history.svg" class="main-nav__image" alt="" width="24" height="24"><span class="main-nav__text">過去のページ</span></button></li>
     </ul>
   </nav>
 </header>
 
-<div class="modal micromodal-slide" id="modal-history" aria-hidden="true">
+<div class="modal micromodal-slide" id="modal-past" aria-hidden="true">
   <div class="modal__overlay" tabindex="-1" data-micromodal-close>
-    <div class="modal__container" role="dialog" aria-modal="true" aria-labelledby="modal-history-title">
+    <div class="modal__container" role="dialog" aria-modal="true" aria-labelledby="modal-past-title">
       <header class="modal__header">
-        <h2 class="modal__title" id="modal-history-title">
-          過去のゴーアラウンド
+        <h2 class="modal__title" id="modal-past-title">
+          過去の日本酒ゴーアラウンド大阪公式サイト
+
         </h2>
-        <button class="modal__close" aria-label="Close modal" data-micromodal-close></button>
       </header>
-      <main class="modal__content" id="modal-history-content">
-        <p>
-          Try hitting the <code>tab</code> key and notice how the focus stays within the modal itself. Also, <code>esc</code> to close modal.
-        </p>
+      <main class="modal__content" id="modal-past-content">
+        <ul class="modal-past__list">
+          <li class="modal-past__item">
+            <a class="modal-past__link" href="https://2018.nga-osaka.com/" target="_blank">
+              <img class="modal-past__image" alt="日本酒ゴーアラウンド大阪2018公式サイト" src="https://2018.nga-osaka.com/wp-content/uploads/2018/08/can_osaka-1.png" width="100" height="100" decoding="async">
+              <span class="modal-past__text">2018</span>
+            </a>
+          </li>
+          <li class="modal-past__item">
+            <a class="modal-past__link" href="https://2019.nga-osaka.com/" target="_blank">
+              <img class="modal-past__image" alt="日本酒ゴーアラウンド大阪2019公式サイト" src="/assets/images/badge-space-2019.png" width="100" height="100" decoding="async">
+              <span class="modal-past__text">2019</span>
+            </a>
+          </li>
+          <li class="modal-past__item">
+            <a class="modal-past__link" href="https://2020.nga-osaka.com/" target="_blank">
+              <img class="modal-past__image" alt="日本酒ゴーアラウンド大阪2020公式サイト" src="/assets/images/badge-osaka-2020.png" width="100" height="100" decoding="async">
+              <span class="modal-past__text">2020</span>
+            </a>
+          </li>
+          <li class="modal-past__item">
+            <a class="modal-past__link" href="https://2021.nga-osaka.com/" target="_blank">
+              <img class="modal-past__image" alt="日本酒ゴーアラウンド大阪2021公式サイト"  src="/assets/images/badge-osaka-2021.png" width="100" height="100" decoding="async">
+              <span class="modal-past__text">2021</span>
+            </a>
+          </li>
+          <li class="modal-past__item">
+            <a class="modal-past__link" href="https://2022.nga-osaka.com/" target="_blank">
+              <img class="modal-past__image" alt="日本酒ゴーアラウンド大阪2022公式サイト"  src="/assets/images/badge-osaka-2022.png" width="100" height="100" decoding="async">
+              <span class="modal-past__text">2022</span>
+            </a>
+          </li>
+        </ul>
       </main>
       <footer class="modal__footer">
-        <button class="modal__btn modal__btn-primary">Continue</button>
-        <button class="modal__btn" data-micromodal-close aria-label="Close this dialog window">Close</button>
+        <button class="modal__close" aria-label="閉じる" data-micromodal-close></button>
       </footer>
     </div>
   </div>
@@ -110,15 +138,14 @@ Basic Modal Styles
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0,0,0,0.6);
+    background: rgba(0,0,0,0.8);
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-end;
     z-index: 10;
   }
 
   .modal__container {
-    background-color: #fff;
     padding: 30px;
     max-width: 500px;
     max-height: 100vh;
@@ -129,7 +156,7 @@ Basic Modal Styles
 
   .modal__header {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
   }
 
@@ -137,21 +164,44 @@ Basic Modal Styles
     margin-top: 0;
     margin-bottom: 0;
     font-weight: 600;
-    font-size: 1.25rem;
+    font-size: 1rem;
     line-height: 1.25;
-    color: #00449e;
+    color: white;
     box-sizing: border-box;
   }
 
   .modal__close {
-    background: transparent;
-    border: 0;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    margin-inline: auto;
+    background: white;
+    border-radius: 50%;
+    border: 2px solid var(--color-sub-accent);
+    &::before,
+    &::after {
+      position: absolute;
+      content: '';
+      background-color: var(--color-sub-accent);
+      width: 60%;
+      height: 2px;
+      display: inline-block;
+    }
+    &::before {
+      rotate: 45deg;
+    }
+    &::after {
+      rotate: -45deg;
+    }
   }
 
   .modal__header .modal__close:before { content: "\2715"; }
 
   .modal__content {
-    margin-top: 2rem;
+    margin-top: 1rem;
     margin-bottom: 2rem;
     line-height: 1.5;
     color: rgba(0,0,0,.8);
@@ -249,5 +299,42 @@ Basic Modal Styles
     will-change: transform;
   }
 
-
+  .modal-past__list {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+  }
+  .modal-past__item {
+    animation: fadeInBouce .5s ease-out both;
+    &:nth-of-type(2) {
+      animation-delay: .1s;
+    }
+    &:nth-of-type(3) {
+      animation-delay: .2s;
+    }
+    &:nth-of-type(4) {
+      animation-delay: .3s;
+    }
+    &:nth-of-type(5) {
+      animation-delay: .4s;
+    }
+  }
+  .modal-past__link {
+    display: block;
+    padding: var(--space-x1);
+    color: white;
+    text-decoration: none;
+    text-align: center;
+  }
+  .modal-past__image {
+    width: 80px;
+    height: auto;
+  }
+  @keyframes fadeInBouce {
+    0%   { transform: scale(1.1, 1.1) translate(0%, 50%); opacity: 0}
+    40%  { transform: scale(0.9, 1.2) translate(0%, -30%); opacity: 1}
+    60%  { transform: scale(1, 1) translate(0%, -40%);  opacity: 1}
+    80%  { transform: scale(0.9, 1.1) translate(0%, -5%); }
+    90%  { transform: scale(1.1, 0.9) translate(0%, 0%); }
+    100%  { transform: scale(1, 1) translate(0%, 0%); }
+  }
 </style>
