@@ -301,14 +301,23 @@ const storeImage3MimeType = store.acf['liquor-shop_image3'] ? store.acf['liquor-
     evenNumber = 16;
   }
 
-  storeList.forEach(store => {
+  const duplicates = new Map();
+
+  storeList.forEach((store,index) => {
+    // データポイントの重複調べて配列へ保存
+    const key = `${store.dataset.taste}-${store.dataset.flavor}`;
+    if (duplicates.has(key)) {
+      duplicates.get(key).push(index);
+    } else {
+      duplicates.set(key, [index]);
+    }
     const storeLink = store.querySelector('.store-link');
     const canceled = storeLink.dataset.canceled;
     if(canceled === 'true') {return false}
     // データポイントを作成
     const sake = {
-      x: store.dataset.taste || 0,
-      y: store.dataset.flavor || 0,
+      x: Number(store.dataset.taste) || 0,
+      y: Number(store.dataset.flavor) || 0,
       label: store.dataset.title,
       slug: storeLink.href,
     }
@@ -335,6 +344,36 @@ const storeImage3MimeType = store.acf['liquor-shop_image3'] ? store.acf['liquor-
     context.fillText(text, textX, textY);
 
     dataPointList.push(canvas);
+  });
+
+  // 重複のあったデータポイントをずらす
+  const randomNumber = evenNumber > 23 ? 0.2 : 0.3;
+  duplicates.forEach(duplicate=>{
+    if(duplicate.length > 1) {
+      duplicate.forEach((key, index) => {
+        console.log(dataSakeList[key]);
+        switch (index) {
+          case 0:
+            dataSakeList[key].x -= randomNumber;
+            dataSakeList[key].y -= randomNumber;
+            break;
+          case 1:
+            dataSakeList[key].x += randomNumber;
+            dataSakeList[key].y += randomNumber;
+            break;
+          case 2:
+            dataSakeList[key].x += randomNumber;
+            dataSakeList[key].y -= randomNumber;
+            break;
+          case 3:
+            dataSakeList[key].x -= randomNumber;
+            dataSakeList[key].y += randomNumber;
+            break;
+          default:
+            break;
+        }
+      })
+    }
   });
 
   // ツールチップカスタマイズ
