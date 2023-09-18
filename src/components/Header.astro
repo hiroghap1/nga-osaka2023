@@ -10,7 +10,7 @@ const { href, title, body } = Astro.props;
 <header class="header">
   <div class="menu">
     <button type="button" id="menu-button" class="menu-button">
-      <img class="menu-button__image" src="" alt="メニューを開く">
+      <img class="menu-button__image" src="/assets/images/menu.png" alt="メニューを開く" width="247" height="234" decoding="async">
     </button>
   </div>
   <nav class="nav">
@@ -80,6 +80,11 @@ const { href, title, body } = Astro.props;
   MicroModal.init({
     disableScroll: true,
   });
+
+  const menuButton = document.getElementById('menu-button');
+  menuButton.addEventListener('click',()=> {
+    menuButton.classList.toggle('is-active');
+  });
 </script>
 <style lang="scss">
   .header {
@@ -130,8 +135,70 @@ const { href, title, body } = Astro.props;
     margin-top: var(--space-x1);
   }
   .menu {
+    width: 110px;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
     display: none;
   }
+  .menu-button {
+    position: relative;
+    background-color: transparent;
+    border: 0;
+    cursor: pointer;
+    &::before,
+    &::after {
+      content: '';
+      display: inline-block;
+      position: absolute;
+      bottom: 100%;
+      left: 0;
+      opacity: 0;
+      width: 90px;
+      height: auto;
+      aspect-ratio: 411/187;
+      pointer-events: none;
+    }
+    &::before {
+      rotate: -35deg;
+      translate: -60% 40%;
+      background: url(/assets/images/balloon-menu.png) no-repeat center/contain;
+    }
+    &::after {
+      rotate: 5deg;
+      translate: 30% -5%;
+      background: url(/assets/images/balloon-open.png) no-repeat center/contain;
+    }
+    &:hover {
+      &::before {
+        animation: balloonIn 2s infinite linear;
+      }
+      &::after {
+        animation: balloonIn 1.5s infinite linear .5s;
+      }
+    }
+    &.is-active {
+    &::before {
+      rotate: 0deg;
+      translate: 10% -10%;
+      background: url(/assets/images/balloon-close.png) no-repeat center/contain;
+      opacity: 1;
+    }
+    &::after {
+      content: none;
+    }
+
+    }
+  }
+
+  @keyframes balloonIn {
+    0% {opacity: 0}
+    1% {opacity: 1}
+    100% {opacity: 1}
+  }
+
+
+
   /**************************\
 Basic Modal Styles
 \**************************/

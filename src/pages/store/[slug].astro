@@ -104,7 +104,7 @@ const storeInCharge = {
   O: 'tane',
 }
 const store = Astro.props.post;
-console.log(store);
+// console.log(store);
 // console.log(store._embedded);
 const eyeCatch = store._embedded['wp:featuredmedia'] ? store._embedded['wp:featuredmedia'][0]
   : {
@@ -140,7 +140,7 @@ const storeImage3MimeType = store.acf.store_image3 ? store.acf.store_image3.mime
 const appetizerImageUrl = store.acf.appetizer_image ? store.acf.appetizer_image : notFoundImage1;
 
 const sakeService = store.acf.sake_service ? `${store.acf.sake_service}[${store.acf.sake_pref}]` : `${store.acf.sake_name}[${store.acf.sake_pref}]`;
-console.log(appetizerImageUrl);
+// console.log(appetizerImageUrl);
 const liquorShopURL = `/liquor-shop/${storeInCharge[store.acf.store_in_charge.value]}`;
 ---
 
