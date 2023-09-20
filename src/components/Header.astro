@@ -13,13 +13,53 @@ const { href, title, body } = Astro.props;
       <img class="menu-button__image" src="/assets/images/menu.png" alt="メニューを開く" width="247" height="234" decoding="async">
     </button>
   </div>
-  <nav class="nav">
+  <nav id="navigation" class="nav">
     <ul class="main-nav__list">
-      <li class="main-nav__item"><a href="/" class="main-nav__link"><img src="/assets/images/icon-home.svg" class="main-nav__image" alt="" width="24" height="24"><span class="main-nav__text">ホーム</span></a></li>
-      <li class="main-nav__item"><a href="/store" class="main-nav__link"><img src="/assets/images/icon-store.svg" class="main-nav__image" alt="" width="24" height="24"><span class="main-nav__text">参加店舗</span></a></li>
-      <li class="main-nav__item"><a href="/liquor-shop" class="main-nav__link"><img src="/assets/images/icon-liquor.svg" class="main-nav__image" alt="" width="24" height="24"><span class="main-nav__text">協力酒販店</span></a></li>
-      <li class="main-nav__item"><a href="/map" class="main-nav__link disabled"><img src="/assets/images/icon-map.svg" class="main-nav__image" alt="" width="24" height="24"><span class="main-nav__text">店舗地図</span></a></li>
-      <li class="main-nav__item"><button class="main-nav__link" data-micromodal-trigger="modal-past"><img src="/assets/images/icon-history.svg" class="main-nav__image" alt="" width="24" height="24"><span class="main-nav__text">過去のページ</span></button></li>
+      <li class="main-nav__item">
+        <a href="/" class="main-nav__link">
+          <picture>
+            <source srcset="/assets/images/icon-menu-home.svg" media="(min-width: 768px)" width="113" height="150">
+            <img src="/assets/images/icon-home.svg" class="main-nav__image" alt="" width="24" height="24">
+          </picture>
+          <span class="main-nav__text">ホーム</span>
+        </a>
+      </li>
+      <li class="main-nav__item">
+        <a href="/store" class="main-nav__link">
+          <picture>
+            <source srcset="/assets/images/icon-menu-store.svg" media="(min-width: 768px)" width="" height="">
+            <img src="/assets/images/icon-store.svg" class="main-nav__image" alt="" width="24" height="24">
+          </picture>
+          <span class="main-nav__text">参加店舗</span>
+        </a>
+      </li>
+      <li class="main-nav__item">
+        <a href="/liquor-shop" class="main-nav__link">
+          <picture>
+            <source srcset="/assets/images/icon-menu-sake.svg" media="(min-width: 768px)" width="" height="">
+            <img src="/assets/images/icon-liquor.svg" class="main-nav__image" alt="" width="24" height="24">
+          </picture>
+          <span class="main-nav__text">協力酒販店</span>
+        </a>
+      </li>
+      <li class="main-nav__item">
+        <a href="/map" class="main-nav__link disabled">
+          <picture>
+            <source srcset="/assets/images/icon-menu-map.svg" media="(min-width: 768px)" width="" height="">
+            <img src="/assets/images/icon-map.svg" class="main-nav__image" alt="" width="24" height="24">
+          </picture>
+          <span class="main-nav__text">店舗地図</span>
+        </a>
+      </li>
+      <li class="main-nav__item">
+        <button class="main-nav__link" data-micromodal-trigger="modal-past">
+          <picture>
+            <source srcset="/assets/images/icon-menu-past.svg" media="(min-width: 768px)" width="84" height="150">
+            <img src="/assets/images/icon-history.svg" class="main-nav__image" alt="" width="24" height="24">
+          </picture>
+          <span class="main-nav__text">過去のページ</span>
+        </button>
+      </li>
     </ul>
   </nav>
 </header>
@@ -30,7 +70,6 @@ const { href, title, body } = Astro.props;
       <header class="modal__header">
         <h2 class="modal__title" id="modal-past-title">
           過去の日本酒ゴーアラウンド大阪公式サイト
-
         </h2>
       </header>
       <main class="modal__content" id="modal-past-content">
@@ -82,8 +121,10 @@ const { href, title, body } = Astro.props;
   });
 
   const menuButton = document.getElementById('menu-button');
+  const navigation = document.getElementById('navigation');
   menuButton.addEventListener('click',()=> {
     menuButton.classList.toggle('is-active');
+    navigation.classList.toggle('is-active');
   });
 </script>
 <style lang="scss">
@@ -93,13 +134,46 @@ const { href, title, body } = Astro.props;
     right: 0;
     bottom: 0;
     z-index: 10;
+    @media (min-width: 768px) {
+      display: grid;
+      place-items: center;
+      width: 110px;
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      left: unset;
+    }
   }
+  .nav {
+    &.is-active {
+      .main-nav__item {
+        opacity: 1;
+        visibility: visible;
+        &:nth-of-type(1) {
+          translate: -160px -30px;
+        }
+        &:nth-of-type(2) {
+          translate: -140px -100px;
+        }
+        &:nth-of-type(3) {
+          translate: -100px -170px;
+        }
+        &:nth-of-type(4) {
+          translate: -30px -200px;
+        }
+        &:nth-of-type(5) {
+          translate: 35px -210px;
+        }
+      }
+  }}
   .main-nav__list {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     margin: 0;
     @media (min-width: 768px) {
-      display: none;
+      position: relative;
+      grid-template: "menu" max-content;
+      place-items: center;
     }
   }
   .main-nav__item {
@@ -109,7 +183,55 @@ const { href, title, body } = Astro.props;
     &:not(:first-of-type) {
       border-left: 1px solid #ddd;
     }
+    @media (min-width: 768px) {
+      position: absolute;
+      grid-area: menu;
+      width: 50px;
+      border: 0!important;
+      background-color: transparent;
+      filter: none;
+      opacity: 0;
+      visibility: hidden;
+      transition: .15s opacity ease-out .15s, .3s translate ease-out;
+      &::after {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: -10px;
+        content: '';
+        width: 80%;
+        height: 6px;
+        margin-inline: auto;
+        background-image: radial-gradient(rgba(0,0,0,.15), transparent);
+        border-radius: 50%;
+      }
+      &:hover {
+        .main-nav__link:not(.disabled) {
+          animation: swaying 1s infinite ease-in-out alternate;
+        }
+        &::after {
+          animation: shadowSwaying 1s infinite ease-in-out alternate;
+        }
+      }
+    }
   }
+  @keyframes swaying{
+    0%{
+      transform: translateY(0);
+    }
+    100%{
+      transform: translateY(-8px);
+    }
+  }
+  @keyframes shadowSwaying{
+    0%{
+      transform: scale(1);
+    }
+    100%{
+      transform: scale(0.5);
+    }
+  }
+
   .main-nav__link {
     display: flex;
     flex-direction: column;
@@ -123,23 +245,29 @@ const { href, title, body } = Astro.props;
     font-size: 10px;
     color: var(--color-font);
     line-height: 1;
+    cursor: pointer;
     &.disabled {
       opacity: .4;
       pointer-events: none;
     }
   }
+
   .main-nav__image {
     filter: contrast(0.6);
+    @media (min-width: 768px) {
+      filter: none;
+      height: 40px;
+      width: auto;
+    }
   }
   .main-nav__text {
     margin-top: var(--space-x1);
   }
   .menu {
-    width: 110px;
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
     display: none;
+    @media (min-width: 768px) {
+      display: block;
+    }
   }
   .menu-button {
     position: relative;
@@ -187,7 +315,6 @@ const { href, title, body } = Astro.props;
     &::after {
       content: none;
     }
-
     }
   }
 
