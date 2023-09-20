@@ -7,6 +7,27 @@ const res = await fetch(`${import.meta.env.PUBLIC_API_URL}/store?per_page=100&or
 const stores = await res.json();
 stores.sort((a, b) => a.acf.store_number - b.acf.store_number);
 // console.log(stores);
+
+const ngaList = [
+	{name:'札幌',slug: 'sapporo',url: 'https://www.instagram.com/nga_sapporo/'},
+	{name:'仙台',slug: 'sendai',url: 'https://www.instagram.com/nga_sendai/'},
+	{name:'東京',slug: 'tokyo',url: 'https://www.facebook.com/sakeome1001/?locale=ja_JP'},
+	{name:'新潟',slug: 'niigata',url: ''},
+	{name:'金沢',slug: 'kanazawa',url: 'https://www.nga-kanazawa.com/'},
+	{name:'静岡',slug: 'shizuoka',url: 'https://www.facebook.com/ngashizuoka/'},
+	{name:'名古屋',slug: 'nagoya',url: 'https://www.facebook.com/profile.php?id=100079705478633'},
+	{name:'京都',slug: 'kyoto',url: 'https://www.facebook.com/profile.php?id=100063838424486&locale=ja_JP'},
+	{name:'大阪',slug: 'osaka',url: 'https://nga-osaka.com/'},
+	{name:'神戸',slug: 'kobe',url: 'https://www.go-around-kobe.com/'},
+	{name:'淡路島',slug: 'awajishima',url: 'https://www.facebook.com/p/%E6%97%A5%E6%9C%AC%E9%85%92%E3%82%B4%E3%83%BC%E3%82%A2%E3%83%A9%E3%82%A6%E3%83%B3%E3%83%89%E6%B7%A1%E8%B7%AF%E5%B3%B6-100064598717254/'},
+	{name:'姫路',slug: 'himeji',url: 'https://www.facebook.com/profile.php?id=100077695929317&locale=ja_JP'},
+	{name:'岡山',slug: 'okayama',url: 'https://www.facebook.com/NGAOKYAMA/?locale=ja_JP'},
+	{name:'広島',slug: 'hiroshima',url: 'https://www.facebook.com/sake1001hiroshima/?locale=ja_JP'},
+	{name:'出雲',slug: 'izumo',url: 'https://www.facebook.com/profile.php?id=100084572854213'},
+	{name:'高知',slug: 'kochi',url: 'https://www.facebook.com/people/%E6%97%A5%E6%9C%AC%E9%85%92%E3%82%B4%E3%83%BC%E3%82%A2%E3%83%A9%E3%82%A6%E3%83%B3%E3%83%89%E9%AB%98%E7%9F%A5/100069240108235/'},
+	{name:'福岡',slug: 'fukuoka',url: 'https://www.facebook.com/NGA2017FUKUOKA/?locale=ja_JP'},
+	{name:'沖縄',slug: 'okinawa',url: 'https://www.facebook.com/NGA2022OKINAWA/'},
+]
 ---
 
 <Layout title="">
@@ -167,6 +188,22 @@ stores.sort((a, b) => a.acf.store_number - b.acf.store_number);
 			</ul>
 			</div>
 		</section>
+		<section class="section section-ngaList">
+			<div class="container">
+				<h2><img class="nga-list__image" src="/assets/images/nga-list-title.svg" alt="全国のゴーアラウンド" width="130" height="172"></h2>
+				<ul class="nga-list">
+					{
+						ngaList.map((nga:any) => (
+							<li class="nga-item" data-pref={nga.slug}>
+								<a href={nga.url} class="nga-link" target="_blank">
+									<img class="nga-image" src={`/assets/images/badge-${nga.slug}.png`} alt={`日本酒ゴーアラウンド2023 ${nga.name}`} width="324" height="324">
+								</a>
+							</li>
+						))
+					}
+				</ul>
+			</div>
+		</section>
 	</main>
 </Layout>
 
@@ -235,6 +272,52 @@ stores.sort((a, b) => a.acf.store_number - b.acf.store_number);
 					duration: 0.7,
 					scrollTrigger: {
 						trigger: item.parentNode,
+						start: 'top 80%',
+						end: 'bottom 20%',
+						toggleActions: 'play none none reverse',
+					}
+				});
+		});
+
+	gsap.utils.toArray('.nga-item:nth-of-type(odd)')
+		.forEach((item) => {
+			gsap.fromTo(item,
+				{
+					x: '-20%',
+					opacity: 0,
+					rotate: '-75deg',
+				},
+				{
+					x: 0,
+					opacity: 1,
+					rotate: '0deg',
+					ease: 'ease-out',
+					duration: 0.7,
+					scrollTrigger: {
+						trigger: item,
+						start: 'top 80%',
+						end: 'bottom 20%',
+						toggleActions: 'play none none reverse',
+					}
+				});
+		});
+
+	gsap.utils.toArray('.nga-item:nth-of-type(even)')
+		.forEach((item) => {
+			gsap.fromTo(item,
+				{
+					x: '20%',
+					opacity: 0,
+					rotate: '75deg',
+				},
+				{
+					x: 0,
+					opacity: 1,
+					rotate: '0deg',
+					ease: 'ease-out',
+					duration: 0.7,
+					scrollTrigger: {
+						trigger: item,
 						start: 'top 80%',
 						end: 'bottom 20%',
 						toggleActions: 'play none none reverse',
@@ -964,5 +1047,47 @@ stores.sort((a, b) => a.acf.store_number - b.acf.store_number);
 		color: white;
 		border-radius: 50%;
 		background-color: #1D2A82;
+	}
+	.section-ngaList {
+		overflow-x: hidden;
+		background: url(/assets/images/section-bg.jpg) no-repeat center/cover;
+	}
+	.nga-list__image {
+		margin-inline: auto;
+	}
+
+	.nga-list {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: var(--space-x6) var(--space-x4);
+		margin-top: var(--space-x10);
+		@media (min-width: 576px) {
+			grid-template-columns: repeat(4, 1fr);
+		}
+		@media (min-width: 768px) {
+			grid-template-columns: repeat(5, 1fr);
+		}
+		@media (min-width: 1000px) {
+			grid-template-columns: repeat(6, 1fr);
+		}
+	}
+	.nga-item {
+		&[data-pref="niigata"] {
+			pointer-events: none;
+			filter: grayscale(1);
+		}
+		@media (hover:hover) {
+			&>.nga-link {
+				display: inline-block;
+				filter: grayscale(1);
+				transition: rotate .3s ease-out;
+			}
+			&:hover {
+				&>.nga-link {
+					filter: grayscale(0);
+					rotate: Y 360deg;
+				}
+			}
+		}
 	}
 </style>
