@@ -43,7 +43,7 @@ const { href, title, body } = Astro.props;
         </a>
       </li>
       <li class="main-nav__item">
-        <a href="/map" class="main-nav__link disabled">
+        <a href="/map" class="main-nav__link">
           <picture>
             <source srcset="/assets/images/icon-menu-map.svg" media="(min-width: 768px)" width="" height="">
             <img src="/assets/images/icon-map.svg" class="main-nav__image" alt="" width="24" height="24">
@@ -145,27 +145,30 @@ const { href, title, body } = Astro.props;
     }
   }
   .nav {
-    &.is-active {
-      .main-nav__item {
-        opacity: 1;
-        visibility: visible;
-        &:nth-of-type(1) {
-          translate: -160px -30px;
-        }
-        &:nth-of-type(2) {
-          translate: -140px -100px;
-        }
-        &:nth-of-type(3) {
-          translate: -100px -170px;
-        }
-        &:nth-of-type(4) {
-          translate: -30px -200px;
-        }
-        &:nth-of-type(5) {
-          translate: 35px -210px;
+    @media (min-width: 768px) {
+      &.is-active {
+        .main-nav__item {
+          opacity: 1;
+          visibility: visible;
+          &:nth-of-type(1) {
+            translate: -160px -30px;
+          }
+          &:nth-of-type(2) {
+            translate: -140px -100px;
+          }
+          &:nth-of-type(3) {
+            translate: -100px -170px;
+          }
+          &:nth-of-type(4) {
+            translate: -30px -200px;
+          }
+          &:nth-of-type(5) {
+            translate: 35px -210px;
+          }
         }
       }
-  }}
+    }
+  }
   .main-nav__list {
     display: grid;
     grid-template-columns: repeat(5, 1fr);

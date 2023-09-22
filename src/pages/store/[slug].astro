@@ -152,7 +152,7 @@ const liquorShopURL = `/liquor-shop/${storeInCharge[store.acf.store_in_charge.va
     </div>
     <div class="container">
       <h1 transition:name="title"><span set:html={store.acf.store_number} />{store.title.rendered}</h1>
-      <p set:html={store.content.rendered} />
+      <div set:html={store.content.rendered} />
       <section>
         <div class="store-decriptionBox">
           <h2 class="store-decriptionBox__title">店舗説明</h2>

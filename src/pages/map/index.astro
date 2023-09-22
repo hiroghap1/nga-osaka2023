@@ -1,3 +1,267 @@
 ---
+import Layout from '../../layouts/Layout.astro';
+const res = await fetch(`${import.meta.env.PUBLIC_API_URL}/store?per_page=100&order=asc&_embed`);
+const stores = await res.json();
+stores.sort((a, b) => a.acf.store_number - b.acf.store_number);
 
 ---
+<Layout title="店舗地図">
+  <main>
+    <div id="store-map-canvas" class="store-map-canvas"></div>
+    <h1>店舗地図</h1>
+    <section class="section section-storeList">
+    <div class="container">
+          <ul class="store-map-list" role="list">
+            {
+              stores.map((store:any) => (
+                      <li class="store-map-item" data-lat={store.acf.lat} data-lng={store.acf.lng}>
+                        <a href={`/store/${store.slug}`} class="store-map-link" data-canceled={store.acf.store_canceled}>
+                          <span class="store-number">{store.acf.store_number}</span>{store.title.rendered}</a>
+                      </li>
+              ))
+            }
+          </ul>
+    </div>
+    </section>
+  </main>
+</Layout>
+
+<script type='text/javascript' src='https://maps.googleapis.com/maps/api/js?key=AIzaSyDB3bXlMGtLIvdtX1rM147U6d8Tb-XOmIk'></script>
+<script>
+  const storeList = document.querySelectorAll('.store-map-item');
+  const randomNumber = Math.floor(Math.random() * storeList.length + 1);
+  const CENTER_LAT = Number(storeList[randomNumber].dataset.lat);
+  const CENTER_LNG = Number(storeList[randomNumber].dataset.lng);
+  const ICON_W = 58 / 2;
+  const ICON_H = 72 / 2;
+  let map;
+  let marker = [];
+  let infoWindow = [];
+
+  console.log(CENTER_LAT,CENTER_LNG);
+
+  // 地図の初期化関数
+  function initMap() {
+    // 地図のオプションを設定
+    const mapOptions = {
+      center: { lat: CENTER_LAT, lng: CENTER_LNG }, // 地図の中心座標
+      zoom: 14, // ズームレベル (1 が世界全体, 20 が最大)
+      streetViewControl: false,
+      overviewMapControl: false,
+      overviewMapControlOptions: {
+        opened: false
+      },
+    };
+
+    // 地図を作成
+    map = new google.maps.Map(document.getElementById("store-map-canvas"), mapOptions);
+
+    // マーカーを追加
+    storeList.forEach((store,index) =>{
+      store.addEventListener('click',()=>{
+        moveMapOffsetTop();
+        panToSelectedMap(index);
+        changeCurrent(index);
+      });
+      const markerLatLng = new google.maps.LatLng({
+        lat: parseFloat(store.dataset.lat),
+        lng: parseFloat(store.dataset.lng)
+      });
+      marker[index] = new google.maps.Marker({
+        animation: google.maps.Animation.DROP,
+        position: markerLatLng,
+        map: map,
+        // icon: {
+        //   // url: $item.find(iconClass).attr('src'),
+        //   scaledSize: new google.maps.Size(ICON_W, ICON_H)
+        // }
+      });
+
+      const div = document.createElement('div');
+      const a = document.createElement('a');
+      div.classList.add('map-popup');
+      a.classList.add('map-popup__link');
+      const link = store.querySelector('.store-map-link')
+      a.innerHTML = link.innerHTML;
+      a.href = link.getAttribute('href');
+      div.appendChild(a);
+      infoWindow[index] = new google.maps.InfoWindow({
+        content: div
+      });
+      markerEvent(index);
+    });
+    changeIcon(randomNumber);
+    changeCurrent(randomNumber);
+    infoWindow[randomNumber].open(map, marker[randomNumber]);
+  }
+  function markerEvent(i) {
+    marker[i].addListener('click', function() {
+      closeInfoWindow();
+      infoWindow[i].open(map, marker[i]);
+      changeIcon(i);
+      changeCurrent(i);
+    });
+  }
+
+  function panToSelectedMap(i) {
+    const store = storeList[i];
+    map.panTo(new google.maps.LatLng(store.dataset.lat, store.dataset.lng));
+    closeInfoWindow();
+    infoWindow[i].open(map, marker[i]);
+  }
+
+  function moveMapOffsetTop() {
+    document.querySelector('html, body').scroll({
+      top: document.querySelector('#store-map-canvas').getBoundingClientRect().top - 130,
+      behavior: 'smooth'
+    });
+  }
+
+  function closeInfoWindow() {
+    for (let i = 0; i < infoWindow.length; i++) {
+      infoWindow[i].close(map, marker[i]);
+    }
+  }
+
+  function changeCurrent(i) {
+    const store = storeList[i];
+    console.log(document.querySelector('.store-map-item.is-current'));
+    const item = document.querySelector('.store-map-item.is-current');
+    if(item !== null) document.querySelector('.store-map-item.is-current').classList.remove('is-current');
+    store.classList.add('is-current');
+    changeIcon(i);
+  }
+
+  function changeIcon(i) {
+    let iconClass = null;
+    for (let k = 0; k < marker.length; k++) {
+      if (k === i) {
+        iconClass = '.store-map-item__icon-current';
+      } else {
+        iconClass = '.store-map-item__icon-normal';
+      }
+      // marker[k].setOptions({
+      //   icon: {
+      //     // url: storeList[k].find(iconClass).attr('src'),
+      //     scaledSize: new google.maps.Size(ICON_W, ICON_H)
+      //   }
+      // });
+    }
+  }
+  initMap();
+</script>
+<style lang="scss">
+  h1 {
+    position: absolute;
+    width: fit-content;
+    margin: 0;
+    padding: var(--space-x4) var(--space-x8);
+    background-color: rgba(255,255,255,.8);
+    line-height: 1;
+    transform: translateY(-50%);
+  }
+    .store-map-canvas {
+        height: 80vh;
+      @media not (min-width: 768px) {
+        height: calc(80vh - 60px);
+      }
+    }
+    .map-popup {
+    }
+    :global(.map-popup__link) {
+      display: flex;
+      align-items: center;
+      gap: var(--space-x1);
+      color: var(--color-font);
+      text-decoration: none;
+      font-weight: bold;
+      @media (hover:hover) {
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+
+  //店舗一覧
+  .section-storeList {
+    background: url(/assets/images/section-store-bg.jpg);
+  }
+  .store-map-list {
+    display: grid;
+    gap: var(--space-x2);
+    padding: var(--space-x5) var(--space-x2);
+    background-color: rgba(255,255,255,.6);
+    @media (min-width: 576px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    @media (min-width: 992px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .store-map-item {
+    cursor: pointer;
+    border: 2px solid transparent;
+    background-color: rgba(255,255,255,.7);
+    background-image: radial-gradient(circle, #f0f0f0 0%, #e9e9e9 100%);
+    background-size: 0%;
+    background-repeat: no-repeat;
+    background-position: center;
+    transition: background-size .3s ease-in-out;
+    &:hover {
+      background-size: 100%;
+      transition: background-size .15s ease-in-out;
+    }
+    &.is-current {
+      border-color: var(--color-sub-accent);
+    }
+  }
+  .store-map-link {
+    display: flex;
+    align-items: center;
+    gap: var(--space-x2);
+    height: 100%;
+    padding: var(--space-x3)  var(--space-x2);
+    color: inherit;
+    text-decoration: none;
+    pointer-events: none;
+    &[data-canceled="true"] {
+      position: relative;
+      &::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        display: block;
+        background-color:rgba(0,0,0,.4);
+      }
+      &::after {
+        content: '出店中止';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        padding: 2px .5em;
+        border-radius: 5px;
+        border: 3px solid;
+        background-color: rgba(255,255,255,.85);
+        font-weight: bold;
+        font-size: 110%;
+        letter-spacing: .2em;
+        color: var(--color-danger);
+        transform: translate(-50%, -50%);
+      }
+      &:hover {
+        background-size: 0%;
+      }
+    }
+  }
+  .store-number {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 1.75em;
+    height: 1.75em;
+    padding-bottom: 0.1em;
+    color: white;
+    border-radius: 50%;
+    background-color: #1D2A82;
+  }
+</style>

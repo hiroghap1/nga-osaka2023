@@ -12,7 +12,7 @@ const ngaList = [
 	{name:'札幌',slug: 'sapporo',url: 'https://www.instagram.com/nga_sapporo/'},
 	{name:'仙台',slug: 'sendai',url: 'https://www.instagram.com/nga_sendai/'},
 	{name:'東京',slug: 'tokyo',url: 'https://www.facebook.com/sakeome1001/?locale=ja_JP'},
-	{name:'新潟',slug: 'niigata',url: ''},
+	{name:'新潟',slug: 'niigata',url: 'https://instagram.com/nga_niigata'},
 	{name:'金沢',slug: 'kanazawa',url: 'https://www.nga-kanazawa.com/'},
 	{name:'静岡',slug: 'shizuoka',url: 'https://www.facebook.com/ngashizuoka/'},
 	{name:'名古屋',slug: 'nagoya',url: 'https://www.facebook.com/profile.php?id=100079705478633'},
@@ -158,6 +158,8 @@ const ngaList = [
 					</h3>
 					<div class="box-contents__inner">
 						<ul>
+							<li>2023.09.23 店舗地図を公開しました。</li>
+							<li>2023.09.20 全国の日本酒ゴーアラウンドへのリンクを設置しました。</li>
 							<li>2023.08.30 「（39）小料理屋 en to jyo」は出店中止となりました。</li>
 							<li>2023.08.27 参加店舗の画像を公開しました。振る舞い酒の都道府県を修正しました。</li>
 							<li>2023.08.25 参加店舗ページを公開しました。</li>
@@ -1072,10 +1074,6 @@ const ngaList = [
 		}
 	}
 	.nga-item {
-		&[data-pref="niigata"] {
-			pointer-events: none;
-			filter: grayscale(1);
-		}
 		@media (hover:hover) {
 			&>.nga-link {
 				display: inline-block;
