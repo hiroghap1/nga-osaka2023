@@ -181,10 +181,21 @@ const ngaList = [
 		<section class="section section-storeList">
 			<div class="container">
 			<h2 id="store-list"><img src="/assets/images/storelist-heading.png" class="storelist-heading__image" alt="参加店舗一覧" width="948" height="851"></h2>
+				<div class="section section-chart">
+				<h3>振舞い酒分布図</h3>
+				<div class="sake-chart-wrapper">
+					<canvas id="sake-chart" class="sake-chart">
+					</canvas>
+					<div class="sake-label label-right">味が濃厚</div>
+					<div class="sake-label label-left">味が淡麗</div>
+					<div class="sake-label label-top">香りが高い</div>
+					<div class="sake-label label-bottom">香りが穏やか</div>
+				</div>
+				</div>
 			<ul class="store-list" role="list">
 				{
 					stores.map((store:any) => (
-						<li class="store-item"><a href={`/store/${store.slug}`} class="store-link" data-canceled={store.acf.store_canceled}><span class="store-number">{store.acf.store_number}</span>{store.title.rendered}</a></li>
+						<li class="store-item" data-title={store.title.rendered} data-taste={store.acf.sake_taste} data-flavor={store.acf.sake_flavor} data-number={store.acf.store_number}><a href={`/store/${store.slug}`} class="store-link" data-canceled={store.acf.store_canceled}><span class="store-number">{store.acf.store_number}</span>{store.title.rendered}</a></li>
 					))
 				}
 			</ul>
@@ -455,7 +466,10 @@ const ngaList = [
 
 	// new p5(sketch, document.getElementById('main-visual-canvas'));
 </script>
+<script src="../scripts/sake-chart.js"></script>
 <style lang="scss">
+	@use "sass:color";
+
 	main {
 		margin: auto;
 		color: var(--font-color);
@@ -1085,6 +1099,87 @@ const ngaList = [
 					filter: grayscale(0);
 					rotate: Y 360deg;
 				}
+			}
+		}
+	}
+	.sake-chart {
+		//padding: var(--space-x3) var(--space-x4);
+	}
+	.sake-chart-wrapper {
+		position: relative;
+		padding: var(--space-x2);
+		background-color: #fff;
+		height: clamp(320px, 50vw, 520px);
+	}
+	.sake-label {
+		position: absolute;
+		inset: 0;
+		width: fit-content;
+		height: fit-content;
+		margin: auto;
+		padding: var(--space-x1);
+		background-color: rgba(255,255,255,.8);
+		font-weight: bold;
+		line-height: 1;
+		&.label-top {
+			bottom: unset;
+			color: #6B9767;
+			@media (min-width: 576px) {
+				top: var(--space-x1);
+			}
+		}
+		&.label-right {
+			left: unset;
+			writing-mode: vertical-rl;
+			color: #BD5D5D;
+			@media (min-width: 576px) {
+				right: var(--space-x1);
+			}
+		}
+		&.label-bottom {
+			top: unset;
+			color: #4191B1;
+			@media (min-width: 576px) {
+				bottom: var(--space-x1);
+			}
+		}
+		&.label-left {
+			right: unset;
+			writing-mode: vertical-rl;
+			color: #BF9E6C;
+			@media (min-width: 576px) {
+				left: var(--space-x1);
+			}
+		}
+	}
+	.section-chart {
+		display: none;
+		&>h3 {
+			position: absolute;
+			margin: 0 auto 0 calc(var(--space-x5) * -1);
+			padding: var(--space-x2) var(--space-x5);
+			background-color: var(--color-sub-accent);
+			background-image: linear-gradient(-90deg, var(--color-sub-accent) 0%, color.scale(#1D2A82, $lightness: -25%) 80%, color.scale(#1D2A82, $lightness: -15%) 100%);
+			color: white;
+			z-index: 1;
+			transform: translateY(-110%);
+			@media (min-width: 768px) {
+				transform: translateY(-50%);
+			}
+			&::before,
+			&::after {
+				content: '';
+				position: absolute;
+				top: 5px;
+				left: 5px;
+				width: 100%;
+				height: 100%;
+				border: 1px solid white;
+			}
+			&::after {
+				top: 6px;
+				left: 6px;
+				border-color: var(--color-sub-accent);
 			}
 		}
 	}

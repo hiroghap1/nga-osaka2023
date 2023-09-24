@@ -114,23 +114,62 @@ stores.forEach(store => {
   <main>
     <h1><img src="/assets/images/storelist-heading.png" class="storelist-heading__image" alt="参加店舗一覧" width="948" height="851"></h1>
     <div class="container">
-      <div class="filter-panel" style="display: grid;">
-        <div class="filter-panel__checks">
-          {
-            areaNameList.map((areaName:string) => (
-                    <label class="filter-area__label"><input type="checkbox" name="area-filter" class="filter-area__input" value={areaName} checked>{areaName}</label>
-            ))
-          }
+      <div class="control-buttons">
+        <button type="button" id="button-filter" class="control-button is-active">絞り込み</button>
+        <button type="button" id="button-display" class="control-button">表示項目</button>
+        <button type="button" id="button-sort" class="control-button">並べ替え</button>
+      </div>
+      <div class="control-panels">
+        <div id="panel-filter" class="control-panel filter-panel is-active" style="display: grid;">
+          <div class="filter-panel__checks">
+            {
+              areaNameList.map((areaName:string) => (
+                      <label class="filter-area__label"><input type="checkbox" name="area-filter" class="filter-area__input" value={areaName} checked>{areaName}</label>
+              ))
+            }
+          </div>
+          <div class="filter-area__buttons">
+            <button type="button" id="button-areas-check" class="filter-area__button">すべてチェック</button>
+            <button type="button" id="button-areas-discheck" class="filter-area__button">すべて外す</button>
+          </div>
         </div>
-        <div class="filter-area__buttons">
-          <button type="button" id="button-areas-check" class="filter-area__button">すべてチェック</button>
-          <button type="button" id="button-areas-discheck" class="filter-area__button">すべて外す</button>
+        <div id="panel-display" class="control-panel display-panel">
+          <div class="display-panel__checks">
+            <label class="display-panel__label"><input type="checkbox" name="display-filter" class="display-panel__input" value="Image" checked><img src="/assets/images/icon-image.svg" width="18" height="18" alt="">画像</label>
+            <label class="display-panel__label"><input type="checkbox" name="display-filter" class="display-panel__input" value="Food" checked><img src="/assets/images/icon-food.svg" width="18" height="18" alt="">付き出し</label>
+            <label class="display-panel__label"><input type="checkbox" name="display-filter" class="display-panel__input" value="Sake" checked><img src="/assets/images/icon-sake.svg" width="18" height="18" alt="">振る舞い酒</label>
+            <label class="display-panel__label"><input type="checkbox" name="display-filter" class="display-panel__input" value="Time" checked><img src="/assets/images/icon-time.svg" width="18" height="18" alt="">イベント時間</label>
+            <label class="display-panel__label"><input type="checkbox" name="display-filter" class="display-panel__input" value="Seat" checked><img src="/assets/images/icon-seat.svg" width="18" height="18" alt="">座席数</label>
+            <label class="display-panel__label"><input type="checkbox" name="display-filter" class="display-panel__input" value="Station" checked><img src="/assets/images/icon-train.svg" width="18" height="18" alt="">最寄り駅</label>
+          </div>
+          <!--<div class="filter-area__buttons">-->
+          <!--  <button type="button" id="button-display-check" class="filter-area__button">すべてチェック</button>-->
+          <!--  <button type="button" id="button-display-discheck" class="filter-area__button">すべて外す</button>-->
+          <!--</div>-->
+        </div>
+        <div id="panel-sort" class="control-panel sort-panel">
+          <div class="sort-panel__radios">
+            <label class="sort-panel__label"><input type="radio" name="sort" id="sort-number-asc" class="sort-panel__input" checked>店舗番号順</label>
+            <label class="sort-panel__label"><input type="radio" name="sort" id="sort-number-desc" class="sort-panel__input">店舗番号逆順</label>
+            <label class="sort-panel__label"><input type="radio" name="sort" id="sort-open-asc" class="sort-panel__input">開店時間が早い順</label>
+            <label class="sort-panel__label"><input type="radio" name="sort" id="sort-open-desc" class="sort-panel__input">開店時間が遅い順</label>
+            <label class="sort-panel__label"><input type="radio" name="sort" id="sort-lo-asc" class="sort-panel__input">ラストオーダーが早い順</label>
+            <label class="sort-panel__label"><input type="radio" name="sort" id="sort-lo-desc" class="sort-panel__input">ラストオーダーが遅い順</label>
+          </div>
         </div>
       </div>
-    <div id="store-list" class="store-list" data-area={areaNameList.join(',')}>
+    <div id="store-list" class="store-list"
+         data-area={areaNameList.join(',')}
+         data-display-image="true"
+         data-display-food="true"
+         data-display-sake="true"
+         data-display-time="true"
+         data-display-seat="true"
+         data-display-station="true"
+    >
       {
         stores.map((store:any) => (
-                <article class="store-item" data-area={areaList[store.area]} data-open={store.acf.event_start} data-end={store.acf.event_end} data-display="true">
+                <article class="store-item" data-area={areaList[store.area]} data-number={store.acf.store_number} data-open={store.acf.event_start.replace(':','')} data-end={store.acf.event_end.replace(':','')} data-display="true">
                   <a href={`/store/${store.slug}`} class="store-link" data-canceled={store.acf.store_canceled}>
                     <figure class="store-figure">
                       <img src={store.image.url} width="1920" height="1080" alt="" class="store-image" loading="lazy">
@@ -139,10 +178,10 @@ stores.forEach(store => {
                     <h2 class="store-title" transition:name="title"><span class="store-number">{store.acf.store_number}</span>{store.title.rendered}<span class="store-price">{Number(store.acf.appetizer_price1).toLocaleString()}円</span></h2>
                     <div class="store-content">
                       <p class="store-content__appetizer"><img src="/assets/images/icon-food.svg" width="18" height="18" alt="">{store.acf.appetizer_name}</p>
-                      <p><img src="/assets/images/icon-sake.svg" width="18" height="18" alt="">{store.acf.sake_service}</p>
-                      <p><img src="/assets/images/icon-time.svg" width="18" height="18" alt="">{store.acf.event_start}〜{store.acf.event_end}</p>
-                      <p><img src="/assets/images/icon-seat.svg" width="18" height="18" alt="">立食 {store.acf.capacity_standing}名/着席 {store.acf.capacity_sitting}名/合計 {Number(store.acf.capacity_standing) + Number(store.acf.capacity_sitting)}名</p>
-                      <p><img src="/assets/images/icon-train.svg" width="18" height="18" alt="">{store.station}</p>
+                      <p class="store-content__sake"><img src="/assets/images/icon-sake.svg" width="18" height="18" alt="">{store.acf.sake_service}</p>
+                      <p class="store-content__time"><img src="/assets/images/icon-time.svg" width="18" height="18" alt="">{store.acf.event_start}〜{store.acf.event_end}</p>
+                      <p class="store-content__seat"><img src="/assets/images/icon-seat.svg" width="18" height="18" alt="">立食 {store.acf.capacity_standing}名/着席 {store.acf.capacity_sitting}名/合計 {Number(store.acf.capacity_standing) + Number(store.acf.capacity_sitting)}名</p>
+                      <p class="store-content__station"><img src="/assets/images/icon-train.svg" width="18" height="18" alt="">{store.station}</p>
                     </div>
                   </a>
                 </article>
@@ -155,10 +194,13 @@ stores.forEach(store => {
 
 <script>
 const areaFilters = document.querySelectorAll('[name="area-filter"]');
+const displayItems = document.querySelectorAll('[name="display-filter"]');
 const storeList = document.getElementById('store-list');
 const storeItems = document.querySelectorAll('.store-item');
 const buttonAreasCheck = document.getElementById('button-areas-check');
 const buttonAreasDisCheck = document.getElementById('button-areas-discheck');
+const buttonControls = document.querySelectorAll('.control-button');
+const panelControls = document.querySelectorAll('.control-panel');
 console.log(storeList.dataset.area.split(','));
 const areaChecked = [];
 areaFilters.forEach(areaFilter => {
@@ -169,6 +211,16 @@ areaFilters.forEach(areaFilter => {
         }
       });
     console.log(areaFilter.value);
+  });
+});
+displayItems.forEach(displayItem =>{
+  displayItem.addEventListener('click', ()=> {
+    const attribute = 'display' + displayItem.value;
+    if(displayItem.checked) {
+      storeList.dataset[attribute] = 'true';
+    } else {
+      storeList.dataset[attribute] = 'false';
+    }
   });
 });
 buttonAreasCheck.addEventListener('click',()=> {
@@ -187,9 +239,61 @@ buttonAreasDisCheck.addEventListener('click',()=> {
     storeItem.dataset.display = false;
   });
 });
+buttonControls.forEach(button =>{
+  button.addEventListener('click',()=>{
+    buttonControls.forEach(buttonRemove => {
+      buttonRemove.classList.remove('is-active');
+    });
+    panelControls.forEach(panel => {
+      panel.classList.remove('is-active');
+    });
+    button.classList.add('is-active');
+   const id = 'panel-' + button.getAttribute('id').split('-')[1];
+   document.getElementById(id).classList.add('is-active');
+  });
+});
+
+// ソートボタン処理
+document.getElementById('sort-number-asc').addEventListener('click', () => {
+  sortByAttribute('number', true);
+});
+
+document.getElementById('sort-number-desc').addEventListener('click', () => {
+  sortByAttribute('number', false);
+});
+
+document.getElementById('sort-open-asc').addEventListener('click', () => {
+  sortByAttribute('open', true);
+});
+
+document.getElementById('sort-open-desc').addEventListener('click', () => {
+  sortByAttribute('open', false);
+});
+
+document.getElementById('sort-lo-asc').addEventListener('click', () => {
+  sortByAttribute('end', true);
+});
+
+document.getElementById('sort-lo-desc').addEventListener('click', () => {
+  sortByAttribute('end', false);
+});
+function sortByAttribute(attribute, ascending = true) {
+  const sortOrder = ascending ? 1 : -1;
+  const elementsArray = Array.from(storeItems).sort((a, b) => {
+    const valueA = parseInt(a.dataset[attribute]);
+    const valueB = parseInt(b.dataset[attribute]);
+    return (valueA - valueB) * sortOrder;
+  });
+
+  elementsArray.forEach((element) => {
+    storeList.appendChild(element);
+  });
+}
 </script>
 
 <style lang="scss">
+  @use "sass:color";
+
   main {
     padding-block: var(--space-x8);
     background: url(/assets/images/store-bg.jpg);
@@ -198,9 +302,52 @@ buttonAreasDisCheck.addEventListener('click',()=> {
     width: 200px;
     margin-inline: auto;
   }
-  .filter-panel {
+  .control-buttons {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .control-button {
+    padding: var(--space-x3) var(--space-x1);
+    border: 0;
+    border-bottom: 2px solid transparent;
     background-color: #fff;
-    padding: var(--space-x4);
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color .3s ease-out;
+    @media (hover: hover) {
+      &:hover {
+        background-color: color.scale(#1D2A82, $lightness: 95%);
+      }
+    }
+
+    &.is-active {
+      color: var(--color-sub-accent);
+      border-color: var(--color-sub-accent);
+    }
+  }
+  .control-panels {
+    display: grid;
+    grid-template: "panel" 1fr / 1fr;
+  }
+  .control-panel {
+    grid-area: panel;
+    background-color: #fff;
+    padding: var(--space-x5) var(--space-x4) var(--space-x4);
+    z-index: 0;
+    &.is-active {
+      z-index: 1;
+    }
+  }
+
+  .sort-panel__radios {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    @media (min-width: 576px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    @media (min-width: 768px) {
+      //grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
   }
   .filter-panel__checks {
     display: grid;
@@ -212,9 +359,24 @@ buttonAreasDisCheck.addEventListener('click',()=> {
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     }
   }
-  .filter-area__label {
+  .display-panel__checks {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    @media (min-width: 576px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    @media (min-width: 768px) {
+      //grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+  }
+  .filter-area__label,
+  .display-panel__label,
+  .sort-panel__label {
     padding: var(--space-x1);
     cursor: pointer;
+  }
+  .display-panel__label {
+    display: flex;
   }
   .filter-area__buttons {
     display: flex;
@@ -250,6 +412,30 @@ buttonAreasDisCheck.addEventListener('click',()=> {
     }
     @media (min-width: 768px) {
       grid-template-columns: repeat(3, 1fr);
+    }
+    &[data-display-image="false"] {
+      row-gap: var(--space-x5);
+      .store-figure {
+        display: none;
+      }
+    }
+    &[data-display-food="false"] .store-content__appetizer {
+      display: none;
+    }
+    &[data-display-sake="false"] .store-content__sake {
+      display: none;
+    }
+    &[data-display-time="false"] .store-content__time {
+      display: none;
+    }
+    &[data-display-seat="false"] .store-content__seat {
+      display: none;
+    }
+    &[data-display-station="false"] .store-content__station {
+      display: none;
+    }
+    &[data-display-food="false"][data-display-sake="false"][data-display-time="false"][data-display-seat="false"][data-display-station="false"] .store-link{
+      padding-bottom: 0;
     }
   }
   .store-link {
@@ -324,7 +510,8 @@ buttonAreasDisCheck.addEventListener('click',()=> {
     align-items: center;
     gap: var(--space-x1);
     grid-template-columns: 1.7em 1fr max-content;
-    margin-block: var(--space-x2);
+    margin: 0;
+    padding-block: var(--space-x2);
     font-size: 16px;
     line-height: 1.3;
   }
@@ -351,12 +538,14 @@ buttonAreasDisCheck.addEventListener('click',()=> {
       display: flex;
       align-items: center;
       gap: var(--space-x1);
-      margin: 6px 0 0;
+      margin: 0;
+      padding-top: 6px;
       line-height: 1.2;
+      &.store-content__appetizer {
+        padding-top: 0;
+        color: #444;
+        font-weight: bold;
+      }
     }
   }
-  .store-content__appetizer {
-    color: #444;
-    font-weight: bold;
-  }
-</style>
+                  </style>
