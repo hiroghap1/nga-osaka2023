@@ -1,13 +1,5 @@
 import { Chart } from 'chart.js/auto';
 
-// 動作チェック中設定 パラーメーターchart=trueのときのみチャートを表示
-const urlParams = new URLSearchParams(window.location.search);
-const chartParam = urlParams.get('chart');
-if (chartParam === 'true') {
-    document.querySelector('.section-chart').style.display = 'block';
-    // const sectionChart = document.querySelector('.section-chart').style.display = 'block';
-}
-
 const storeList = document.querySelectorAll('.store-item');
 // console.log(storeList);
 const dataSakeList = [];
@@ -43,7 +35,7 @@ storeList.forEach((store,index) => {
 
     // データポイントを作成
     const sake = {
-        x: Number(store.dataset.taste) - 1 || 0,
+        x: Number(store.dataset.taste) || 0,
         y: Number(store.dataset.flavor) || 0,
         label: store.dataset.title,
         slug: storeLink.href,
@@ -86,19 +78,19 @@ duplicates.forEach((duplicate,index)=>{
             // console.log(dataSakeList[key],index);
             switch (index) {
                 case 0:
-                    if(dataSakeList[key].x !== -9) dataSakeList[key].x -= randomNumberX;
+                    if(dataSakeList[key].x !== -10) dataSakeList[key].x -= randomNumberX;
                     if(dataSakeList[key].y !== -10) dataSakeList[key].y -= randomNumberY;
                     break;
                 case 1:
-                    if(dataSakeList[key].x !== 9) dataSakeList[key].x += randomNumberX;
+                    if(dataSakeList[key].x !== 10) dataSakeList[key].x += randomNumberX;
                     if(dataSakeList[key].y !== 10) dataSakeList[key].y += randomNumberY;
                     break;
                 case 2:
-                    if(dataSakeList[key].x !== 9) dataSakeList[key].x += randomNumberX;
+                    if(dataSakeList[key].x !== 10) dataSakeList[key].x += randomNumberX;
                     if(dataSakeList[key].y !== -10) dataSakeList[key].y -= randomNumberY;
                     break;
                 case 3:
-                    if(dataSakeList[key].x !== -9) dataSakeList[key].x -= randomNumberX;
+                    if(dataSakeList[key].x !== -10) dataSakeList[key].x -= randomNumberX;
                     if(dataSakeList[key].y !== 10) dataSakeList[key].y += randomNumberY;
                     break;
                 default:
@@ -161,7 +153,8 @@ const externalTooltipHandler = (context) => {
 };
 
 const sakeChartElement = document.getElementById('sake-chart');
-const sakeChart = new Chart(sakeChartElement, {
+const sakeChartModalElement = document.getElementById('modal-chart-canvas');
+const chartConfig = {
     type: "scatter",
     data: {
         datasets: [{
@@ -193,8 +186,8 @@ const sakeChart = new Chart(sakeChartElement, {
                 },
             },
             x: {
-                suggestedMin: -9,
-                suggestedMax: 9,
+                suggestedMin: -10,
+                suggestedMax: 10,
                 position: 'center',
                 ticks: {
                     display: false
@@ -227,4 +220,9 @@ const sakeChart = new Chart(sakeChartElement, {
             },
         },
     },
-});
+}
+const sakeChart = new Chart(sakeChartElement, chartConfig);
+if(sakeChartModalElement !== null) {
+    console.log('モーダル有り');
+    const sakeChartModal = new Chart(sakeChartModalElement, chartConfig);
+}

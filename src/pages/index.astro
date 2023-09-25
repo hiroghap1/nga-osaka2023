@@ -191,6 +191,7 @@ const ngaList = [
 					<div class="sake-label label-top">香りが高い</div>
 					<div class="sake-label label-bottom">香りが穏やか</div>
 				</div>
+					<button type="button" id="button-chart-expansion" class="button-chart-expansion" data-micromodal-trigger="modal-chart"><img src="/assets/images/icon-full.svg" alt="" width="18" height="18">拡大表示する</button>
 				</div>
 			<ul class="store-list" role="list">
 				{
@@ -218,12 +219,48 @@ const ngaList = [
 			</div>
 		</section>
 	</main>
+	<div class="modal micromodal-chart" id="modal-chart" aria-hidden="true">
+		<div class="modal__overlay" tabindex="-1" data-micromodal-close>
+			<div class="modal__container" role="dialog" aria-modal="true" aria-labelledby="modal-chart-title">
+				<header class="modal__header">
+					<h2 class="modal__title" id="modal-chart-title">
+						振る舞い酒分府図
+					</h2>
+				</header>
+				<main class="modal__content" id="modal-chart-content">
+					<div class="sake-chart-wrapper">
+						<canvas id="modal-chart-canvas" class="sake-chart">
+						</canvas>
+						<div class="sake-label label-right">味が濃厚</div>
+						<div class="sake-label label-left">味が淡麗</div>
+						<div class="sake-label label-top">香りが高い</div>
+						<div class="sake-label label-bottom">香りが穏やか</div>
+					</div>
+				</main>
+				<footer class="modal__footer">
+					<button class="modal__close" aria-label="閉じる" data-micromodal-close></button>
+				</footer>
+			</div>
+		</div>
+	</div>
 </Layout>
 
 <script>
 	import gsap from 'gsap';
 	import { ScrollTrigger } from "gsap/ScrollTrigger";
 	import p5 from 'p5';
+	import MicroModal from 'micromodal';
+
+	const modal = document.getElementById('modal-chart');
+
+	MicroModal.init({
+		disableScroll: true,
+		onShow: (modal) => {
+			const chart = document.getElementById('modal-chart-content');
+			console.log(window.innerHeight * 1.2);
+			chart.scrollLeft = window.innerHeight * 0.6 - chart.clientWidth / 2;
+		},
+	});
 
 	gsap.registerPlugin(ScrollTrigger);
 	gsap.timeline({ repeat: 0, repeatDelay: 0.5 })
@@ -430,7 +467,6 @@ const ngaList = [
 			circleElement.style.top = (elementData.top / effectCircleHeight * 100) + '%';
 			effectCircle.appendChild(circleElement);
 		}
-
 	});
 
 	const sketch = (p: p5) => {
@@ -1153,7 +1189,6 @@ const ngaList = [
 		}
 	}
 	.section-chart {
-		display: none;
 		&>h3 {
 			position: absolute;
 			margin: 0 auto 0 calc(var(--space-x5) * -1);
@@ -1183,4 +1218,271 @@ const ngaList = [
 			}
 		}
 	}
+	.button-chart-expansion {
+		display: flex;
+		gap: var(--space-x1);
+		margin-left: auto;
+		margin-top: var(--space-x4);
+		padding: var(--space-x3) var(--space-x4);
+		border: 0;
+		background-color: #fff;
+		cursor: pointer;
+		transition: background-color .3s ease-out;
+		@media (hover: hover) {
+			&:hover {
+				background-color: color.scale(#1D2A82, $lightness: 95%);
+			}
+		}
+		@media (min-width: 768px) {
+			display: none;
+		}
+	}
+	/**************************\
+Basic Modal Styles
+\**************************/
+
+	.modal {
+		font-family: -apple-system,BlinkMacSystemFont,avenir next,avenir,helvetica neue,helvetica,ubuntu,roboto,noto,segoe ui,arial,sans-serif;
+	}
+
+	.modal__overlay {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background: rgba(0,0,0,0.8);
+		display: flex;
+		justify-content: center;
+		align-items: flex-end;
+		z-index: 10;
+	}
+
+	.modal__container {
+		padding: 30px;
+		max-width: 500px;
+		max-height: 100vh;
+		border-radius: 4px;
+		overflow-y: auto;
+		box-sizing: border-box;
+	}
+
+	.modal__header {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.modal__title {
+		margin-top: 0;
+		margin-bottom: 0;
+		font-weight: 600;
+		font-size: 1rem;
+		line-height: 1.25;
+		color: white;
+		box-sizing: border-box;
+	}
+
+	.modal__close {
+		position: relative;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 44px;
+		height: 44px;
+		margin-inline: auto;
+		background: white;
+		border-radius: 50%;
+		border: 2px solid var(--color-sub-accent);
+		&::before,
+		&::after {
+			position: absolute;
+			content: '';
+			background-color: var(--color-sub-accent);
+			width: 60%;
+			height: 2px;
+			display: inline-block;
+		}
+		&::before {
+			rotate: 45deg;
+		}
+		&::after {
+			rotate: -45deg;
+		}
+	}
+
+	.modal__header .modal__close:before { content: "\2715"; }
+
+	.modal__content {
+		margin-top: 1rem;
+		margin-bottom: 2rem;
+		line-height: 1.5;
+		color: rgba(0,0,0,.8);
+	}
+
+	.modal__btn {
+		font-size: .875rem;
+		padding-left: 1rem;
+		padding-right: 1rem;
+		padding-top: .5rem;
+		padding-bottom: .5rem;
+		background-color: #e6e6e6;
+		color: rgba(0,0,0,.8);
+		border-radius: .25rem;
+		border-style: none;
+		border-width: 0;
+		cursor: pointer;
+		-webkit-appearance: button;
+		text-transform: none;
+		overflow: visible;
+		line-height: 1.15;
+		margin: 0;
+		will-change: transform;
+		-moz-osx-font-smoothing: grayscale;
+		-webkit-backface-visibility: hidden;
+		backface-visibility: hidden;
+		-webkit-transform: translateZ(0);
+		transform: translateZ(0);
+		transition: -webkit-transform .25s ease-out;
+		transition: transform .25s ease-out;
+		transition: transform .25s ease-out,-webkit-transform .25s ease-out;
+	}
+
+	.modal__btn:focus, .modal__btn:hover {
+		-webkit-transform: scale(1.05);
+		transform: scale(1.05);
+	}
+
+	.modal__btn-primary {
+		background-color: #00449e;
+		color: #fff;
+	}
+
+
+
+	/**************************\
+    Demo Animation Style
+  \**************************/
+	@keyframes mmfadeIn {
+		from { opacity: 0; }
+		to { opacity: 1; }
+	}
+
+	@keyframes mmfadeOut {
+		from { opacity: 1; }
+		to { opacity: 0; }
+	}
+
+	@keyframes mmslideIn {
+		from { transform: translateY(15%); }
+		to { transform: translateY(0); }
+	}
+
+	@keyframes mmslideOut {
+		from { transform: translateY(0); }
+		to { transform: translateY(-10%); }
+	}
+
+	.micromodal-chart {
+		display: none;
+	}
+
+	.micromodal-chart.is-open {
+		display: block;
+	}
+
+	.micromodal-chart[aria-hidden="false"] .modal__overlay {
+		animation: mmfadeIn .3s cubic-bezier(0.0, 0.0, 0.2, 1);
+	}
+
+	.micromodal-chart[aria-hidden="false"] .modal__container {
+		animation: mmslideIn .3s cubic-bezier(0, 0, .2, 1);
+	}
+
+	.micromodal-chart[aria-hidden="true"] .modal__overlay {
+		animation: mmfadeOut .3s cubic-bezier(0.0, 0.0, 0.2, 1);
+	}
+
+	.micromodal-chart[aria-hidden="true"] .modal__container {
+		animation: mmslideOut .3s cubic-bezier(0, 0, .2, 1);
+	}
+
+	.micromodal-chart .modal__container,
+	.micromodal-chart .modal__overlay {
+		will-change: transform;
+	}
+
+	.modal-past__list {
+		display: grid;
+		grid-template-columns: repeat(5, 1fr);
+	}
+	.modal-past__item {
+		animation: fadeInBouce .5s ease-out both;
+		&:nth-of-type(2) {
+			animation-delay: .1s;
+		}
+		&:nth-of-type(3) {
+			animation-delay: .2s;
+		}
+		&:nth-of-type(4) {
+			animation-delay: .3s;
+		}
+		&:nth-of-type(5) {
+			animation-delay: .4s;
+		}
+	}
+	.modal-past__link {
+		display: block;
+		padding: var(--space-x1);
+		color: white;
+		text-decoration: none;
+		text-align: center;
+	}
+	.modal-past__image {
+		width: 80px;
+		height: auto;
+	}
+	@keyframes fadeInBouce {
+		0%   { transform: scale(1.1, 1.1) translate(0%, 50%); opacity: 0}
+		40%  { transform: scale(0.9, 1.2) translate(0%, -30%); opacity: 1}
+		60%  { transform: scale(1, 1) translate(0%, -40%);  opacity: 1}
+		80%  { transform: scale(0.9, 1.1) translate(0%, -5%); }
+		90%  { transform: scale(1.1, 0.9) translate(0%, 0%); }
+		100%  { transform: scale(1, 1) translate(0%, 0%); }
+	}
+.micromodal-chart {
+	.modal__content {
+		width: 100%;
+		overflow-x: scroll;
+		&::after {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			content: '';
+			display: inline-block;
+			width: 150px;
+			height: auto;
+			aspect-ratio: 3/4;
+			background: url(/assets/images/enable-scroll.svg) no-repeat center/contain;
+		}
+	}
+	.sake-chart-wrapper {
+		position: relative;
+		width: 120vh;
+		max-width: unset;
+		height: 60vh;
+	}
+	&.is-open {
+		.modal__content {
+			&::after {
+				animation: fadeOut .5s ease-out both 1s;
+			}
+		}
+	}
+}
+@keyframes fadeOut {
+	from {opacity: 1}
+	to {opacity: 0}
+}
 </style>
