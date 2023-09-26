@@ -31,6 +31,10 @@ type Post = {
     appetizer_image: string,
     sake_service: string,
     sake_pref: string,
+    sake_temp:[{
+      value: string,
+      label: string,
+    }],
     store_url: string,
     store_image1: undefined | {
       url: string,
@@ -142,6 +146,22 @@ const appetizerImageUrl = store.acf.appetizer_image ? store.acf.appetizer_image 
 const sakeService = store.acf.sake_service ? `${store.acf.sake_service}[${store.acf.sake_pref}]` : `${store.acf.sake_name}[${store.acf.sake_pref}]`;
 // console.log(appetizerImageUrl);
 const liquorShopURL = `/liquor-shop/${storeInCharge[store.acf.store_in_charge.value]}`;
+const temperature = [];
+store.acf.sake_temp.forEach(temp => {
+  let className = '';
+  switch (temp.label){
+    case '冷酒':
+      className = 'temp-cold';
+      break;
+    case '常温':
+      className = 'temp-normal';
+      break;
+    case '燗酒':
+      className = 'temp-hot';
+      break;
+  }
+  temperature.push(`<span class="sake-temp ${className}">${temp.label}</span>`);
+});
 ---
 
 <Layout title={ store.title.rendered }>
@@ -224,14 +244,10 @@ const liquorShopURL = `/liquor-shop/${storeInCharge[store.acf.store_in_charge.va
             <dt class="store-spec__term">サービス酒</dt>
             <dd class="store-spec__description">{sakeService}</dd>
           </div>
-          <!--<div class="store-spec__group">-->
-          <!--  <dt class="store-spec__term">お酒のタイプ</dt>-->
-          <!--  <dd class="store-spec__description"></dd>-->
-          <!--</div>-->
-          <!--<div class="store-spec__group">-->
-          <!--  <dt class="store-spec__term">提供温度</dt>-->
-          <!--  <dd class="store-spec__description"></dd>-->
-          <!--</div>-->
+          <div class="store-spec__group">
+            <dt class="store-spec__term">提供温度</dt>
+            <dd class="store-spec__description" set:html={temperature}></dd>
+          </div>
           <div class="store-spec__group">
             <dt class="store-spec__term">開催時間</dt>
             <dd class="store-spec__description">{store.acf.event_start}〜{store.acf.event_end}</dd>

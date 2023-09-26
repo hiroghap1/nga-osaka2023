@@ -150,4 +150,23 @@ const url = new URL(Astro.url.pathname, 'https://nga-osaka.com');
 			height: 400px;
 		}
 	}
+	.sake-temp {
+		display: inline-block;
+		padding: var(--space-x2) var(--space-x3);
+		margin-right: var(--space-x2);
+		border: 1px solid;
+		line-height: 1.1;
+		&.temp-cold {
+			background-color: lightskyblue;
+			border-color: deepskyblue;
+		}
+		&.temp-normal {
+			background-color: lavender;
+			border-color: lightsteelblue;
+		}
+		&.temp-hot {
+			background-color: coral;
+			border-color: crimson;
+		}
+	}
 </style>
