@@ -17,6 +17,11 @@ interface Props {
 	station: string;
 	taste: number;
 	flavor: number;
+	temperature: [{
+		label: string,
+		value: string,
+	}];
+	distance: string,
 }
 
 const {
@@ -37,12 +42,20 @@ const {
 	station,
 	taste,
 	flavor,
+	temperature,
+	distance,
 } = Astro.props;
 
+let temperatureText = '';
+temperature.forEach((temp, index) => {
+	const tempText = temp.value;
+	temperatureText += index === 0 ? tempText : '・' + tempText;
+});
 // console.log(Astro.props);
 ---
 
-<article class="store-item" data-area={area} data-open={open} data-end={end} data-display="true" data-taste={taste} data-flavor={flavor} data-title={title} data-number={number}>
+<article class="store-item" data-area={area} data-open={open} data-end={end} data-display="true" data-taste={taste} data-flavor={flavor} data-title={title} data-number={number} data-distance={distance}>
+	<div class="store-distance">約<span class="store-distance__meters">{Number(distance)}</span>m</div>
 	<a href={`/store/${href}`} class="store-link" data-canceled={canceled}>
 		<figure class="store-figure">
 			<img src={image} width="1920" height="1080" alt="" class="store-image" loading="lazy">
@@ -50,8 +63,9 @@ const {
 		</figure>
 		<h2 class="store-title" transition:name="title"><span class="store-number">{number}</span>{title}<span class="store-price">{Number(price).toLocaleString()}円</span></h2>
 		<div class="store-content">
-			<p class="store-content__appetizer"><img src="/assets/images/icon-food.svg" width="18" height="18" alt="">{appetizer}</p>
-			<p><img src="/assets/images/icon-sake.svg" width="18" height="18" alt="">{sake}</p>
+			<p class="store-content__appetizer"><img src="/assets/images/icon-food.svg" width="18" height="18" alt="">{appetizer.replaceAll('　',' ')}</p>
+			<p><img src="/assets/images/icon-sake.svg" width="18" height="18" alt="">{sake.replaceAll('　',' ')}</p>
+			<p class="store-content__temp"><img src="/assets/images/icon-temp.svg" width="18" height="18" alt="">{temperatureText}</p>
 			<p><img src="/assets/images/icon-time.svg" width="18" height="18" alt="">{open}〜{end}</p>
 			<p><img src="/assets/images/icon-seat.svg" width="18" height="18" alt="">立食 {standing}名/着席 {sitting}名/合計 {standing + sitting}名</p>
 			<p><img src="/assets/images/icon-train.svg" width="18" height="18" alt="">{station}</p>
@@ -60,6 +74,29 @@ const {
 </article>
 
 <style>
+	.store-item {
+		position: relative;
+		&[data-distance="0"] {
+			&>.store-distance {
+				display: none;
+			}
+		}
+		.store-distance {
+			position: absolute;
+			padding: var(--space-x1) var(--space-x4);
+			background-color: rgba(100,100,100,.8);
+			z-index: 2;
+			color: white;
+			font-size: 120%;
+			translate: -10px -10px;
+		}
+	}
+	.store-distance__meters {
+		display: inline-block;
+		padding-inline: 2px;
+		font-size: 120%;
+		font-weight: bold;
+	}
 	.store-link {
 		display: block;
 		height: 100%;

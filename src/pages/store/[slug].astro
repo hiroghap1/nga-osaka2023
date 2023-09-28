@@ -2,6 +2,7 @@
 import Layout from '@src/layouts/Layout.astro';
 import Lightbox from '@julian_cataldo/astro-lightbox/Lightbox.astro';
 import DisplayComponents from '@src/components/DisplayComponents.astro';
+import Card from '../../components/Card.astro';
 
 
 type Post = {
@@ -107,9 +108,63 @@ const storeInCharge = {
   N: 'hashimoto',
   O: 'tane',
 }
+
+// エリア設定
+const taxonomy = await fetch(`${import.meta.env.PUBLIC_API_URL}/area?per_page=20`);
+const areas = await taxonomy.json();
+// console.log(areas);
+const areaList = {};
+
+areas.forEach(item => {
+  areaList[item.id] = item.name;
+});
+// /エリア設定
+
 const store = Astro.props.post;
 // console.log(store);
 // console.log(store._embedded);
+
+// 店舗間の距離計算
+const calcDistance = (lat1, lng1, lat2, lng2) => {
+  const earthRadiusInMeters = 6371000; // 地球の半径（メートル）
+
+  const lat1Rad = (lat1 * Math.PI) / 180;
+  const lng1Rad = (lng1 * Math.PI) / 180;
+  const lat2Rad = (lat2 * Math.PI) / 180;
+  const lng2Rad = (lng2 * Math.PI) / 180;
+
+  const dLat = lat2Rad - lat1Rad;
+  const dLon = lng2Rad - lng1Rad;
+  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1Rad) * Math.cos(lat2Rad) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  const distanceInMeters = Math.floor(earthRadiusInMeters * c);
+  return distanceInMeters;
+}
+
+// 同じエリアのお店
+const shopRes = await fetch(`${import.meta.env.PUBLIC_API_URL}/store?per_page=100&order=asc&_embed`);
+const shopList = await shopRes.json();
+const areaShopList = shopList.filter(shop=>{
+  shop.distance = calcDistance(store.acf.lat, store.acf.lng, shop.acf.lat, shop.acf.lng,);
+  return store.id !== shop.id && (store.area[0] === shop.area[0] || shop.distance < 1000);
+});
+
+areaShopList.forEach(shop => {
+  shop.image = {};
+  if(shop['_embedded']['wp:featuredmedia']) {
+    shop.image.url = shop.acf.appetizer_image;
+  } else {
+    shop.image.width = '1920';
+    shop.image.height = '1080';
+    shop.image.url = 'https://data.nga-osaka.com/2023/wp-content/uploads/2023/08/preparation-image16-9.jpg';
+  }
+  shop.station = shop.acf.store_station.includes('駅') ? shop.acf.store_station : shop.acf.store_station + '駅';
+});
+// /同じエリアのお店
+
 const eyeCatch = store._embedded['wp:featuredmedia'] ? store._embedded['wp:featuredmedia'][0]
   : {
     source_url: 'https://data.nga-osaka.com/2023/wp-content/uploads/2023/08/preparation-image16-9.jpg',
@@ -285,6 +340,38 @@ store.acf.sake_temp.forEach(temp => {
             <dd class="store-spec__description"><a href={liquorShopURL} class="liquor-shop__link"><span class="liquor-shop__number">{store.acf.store_in_charge.value}</span>{store.acf.store_in_charge.label}</a></dd>
           </div>
         </dl>
+      </section>
+      <section class="section">
+        <h2 class="section__title">同じエリアのお店</h2>
+        <p class="block-center">
+          同じ市・区、または1,000m未満の距離のお店を表示しています。<br>
+          ※お店までの距離は、直線距離での概算となります。</p>
+        <div class="store-list" data-area="">
+          {
+            areaShopList.map((shop:any) => (
+                    <Card
+                            title = {shop.title.rendered}
+                            number = {shop.acf.store_number}
+                            href = {shop.slug},
+                            open = {shop.acf.event_start},
+                            end = {shop.acf.event_end},
+                            area = {areaList[shop.area]},
+                            canceled = {shop.acf.store_canceled},
+                            image = {shop.image.url},
+                            price = {Number(shop.acf.appetizer_price1)},
+                            appetizer = {shop.acf.appetizer_name},
+                            sake = {shop.acf.sake_service},
+                            standing = {Number(shop.acf.capacity_standing)},
+                            sitting = {Number(shop.acf.capacity_sitting)},
+                            station = {shop.station},
+                            taste = {shop.acf.sake_taste},
+                            flavor = {shop.acf.sake_flavor},
+                            temperature = {shop.acf.sake_temp},
+                            distance = {shop.distance},
+                    />
+            ))
+          }
+        </div>
       </section>
     </div>
   </main>
@@ -652,5 +739,41 @@ store.acf.sake_temp.forEach(temp => {
       background-color: var(--color-secondary);
       font-weight: bold;
       color: white;
+    }
+    .section__title {
+      position: relative;
+      width: max-content;
+      margin-inline: auto;
+      padding: var(--space-x2) var(--space-x5);
+      background-color: var(--color-secondary);
+      background-image: linear-gradient(-90deg, var(--color-sub-accent) 0%, color.scale(#1D2A82, $lightness: -25%) 80%, color.scale(#1D2A82, $lightness: -15%) 100%);
+      color: white;
+      z-index: 1;
+      &::before,
+      &::after {
+        content: '';
+        position: absolute;
+        top: 5px;
+        left: 5px;
+        width: 100%;
+        height: 100%;
+        border: 1px solid white;
+      }
+      &::after {
+        top: 6px;
+        left: 6px;
+        border-color: var(--color-secondary);
+      }
+    }
+    .store-list {
+      display: grid;
+      gap: var(--space-x8) var(--space-x5);
+      margin-top: var(--space-x8);
+      @media (min-width: 576px) {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      @media (min-width: 768px) {
+        grid-template-columns: repeat(3, 1fr);
+      }
     }
   </style>

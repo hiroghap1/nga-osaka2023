@@ -14,7 +14,7 @@ stores.sort((a, b) => a.acf.store_number - b.acf.store_number);
           <ul class="store-map-list" role="list">
             {
               stores.map((store:any) => (
-                      <li class="store-map-item" data-lat={store.acf.lat} data-lng={store.acf.lng}>
+                      <li class="store-map-item" data-lat={store.acf.lat} data-lng={store.acf.lng} data-id={store.id} data-congestion="" data-modified="">
                         <a href={`/store/${store.slug}`} class="store-map-link" data-canceled={store.acf.store_canceled}>
                           <span class="store-number">{store.acf.store_number}</span>{store.title.rendered}</a>
                       </li>
@@ -40,12 +40,29 @@ stores.sort((a, b) => a.acf.store_number - b.acf.store_number);
 
   console.log(CENTER_LAT,CENTER_LNG);
 
+  // congestion=on のときのみ混雑度を表示
+  const urlParams = new URLSearchParams(window.location.search);
+  const congestionParam = urlParams.get('congestion');
+  if (congestionParam === 'on') {
+    // 混雑度取得
+    const res = await fetch(`${ import.meta.env.PUBLIC_API_URL }/congestion`);
+    const posts = await res.json();
+    console.log(posts);
+    const congestionList = document.querySelectorAll('.store-map-item');
+    congestionList.forEach(elm => {
+      const congestion = posts.find(obj => obj.id === Number(elm.dataset.id));
+      elm.dataset.congestion = congestion.store_congestion;
+      elm.dataset.modefied = congestion.last_modified;
+    });
+    // /混雑度取得
+  }
+
   // 地図の初期化関数
   function initMap() {
     // 地図のオプションを設定
     const mapOptions = {
       center: { lat: CENTER_LAT, lng: CENTER_LNG }, // 地図の中心座標
-      zoom: 14, // ズームレベル (1 が世界全体, 20 が最大)
+      zoom: 16, // ズームレベル (1 が世界全体, 20 が最大)
       streetViewControl: false,
       overviewMapControl: false,
       overviewMapControlOptions: {
@@ -79,12 +96,18 @@ stores.sort((a, b) => a.acf.store_number - b.acf.store_number);
 
       const div = document.createElement('div');
       const a = document.createElement('a');
+      const p = document.createElement('p');
       div.classList.add('map-popup');
       a.classList.add('map-popup__link');
+      p.classList.add('map-popup__congestion');
+      if(congestionParam === 'on') p.classList.add('is-congestion');
       const link = store.querySelector('.store-map-link')
       a.innerHTML = link.innerHTML;
       a.href = link.getAttribute('href');
+      p.dataset.id = store.dataset.id;
+      p.innerHTML = `<span class="map-popup__congestion-text">混雑度［${store.dataset.congestion}］</span>※${store.dataset.modefied}更新`;
       div.appendChild(a);
+      div.appendChild(p);
       infoWindow[index] = new google.maps.InfoWindow({
         content: div
       });
@@ -125,7 +148,7 @@ stores.sort((a, b) => a.acf.store_number - b.acf.store_number);
 
   function changeCurrent(i) {
     const store = storeList[i];
-    console.log(document.querySelector('.store-map-item.is-current'));
+    // console.log(document.querySelector('.store-map-item.is-current'));
     const item = document.querySelector('.store-map-item.is-current');
     if(item !== null) document.querySelector('.store-map-item.is-current').classList.remove('is-current');
     store.classList.add('is-current');
@@ -149,6 +172,7 @@ stores.sort((a, b) => a.acf.store_number - b.acf.store_number);
     }
   }
   initMap();
+
 </script>
 <style lang="scss">
   h1 {
@@ -166,7 +190,7 @@ stores.sort((a, b) => a.acf.store_number - b.acf.store_number);
         height: calc(80vh - 60px);
       }
     }
-    .map-popup {
+  :global(.map-popup) {
     }
     :global(.map-popup__link) {
       display: flex;
@@ -181,6 +205,18 @@ stores.sort((a, b) => a.acf.store_number - b.acf.store_number);
         }
       }
     }
+  :global(.map-popup__congestion) {
+    display: none;
+    margin: var(--space-x1) 0 0;
+    &.is-congestion {
+      display: block;
+
+    }
+  }
+  :global(.map-popup__congestion-text) {
+    display: block;
+    font-weight: bold;
+  }
 
   //店舗一覧
   .section-storeList {
