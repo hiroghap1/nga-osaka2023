@@ -121,7 +121,7 @@ areas.forEach(item => {
 // /エリア設定
 
 const store = Astro.props.post;
-// console.log(store);
+// console.log(Astro.props);
 // console.log(store._embedded);
 
 // 店舗間の距離計算
@@ -772,7 +772,7 @@ store.acf.sake_temp.forEach(temp => {
       @media (min-width: 576px) {
         grid-template-columns: repeat(2, 1fr);
       }
-      @media (min-width: 768px) {
+      @media (min-width: 1040px) {
         grid-template-columns: repeat(3, 1fr);
       }
     }

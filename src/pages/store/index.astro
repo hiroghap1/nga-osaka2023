@@ -127,16 +127,19 @@ stores.forEach(store => {
       </div>
       <div class="control-panels">
         <div id="panel-filter" class="control-panel filter-panel is-active" style="display: grid;">
+          <div class="filter-panel__header">
+            <p class="filter-panel__title">エリア</p>
+            <div class="filter-area__buttons">
+              <button type="button" id="button-areas-check" class="filter-area__button">すべてチェック</button>
+              <button type="button" id="button-areas-discheck" class="filter-area__button">すべて外す</button>
+            </div>
+          </div>
           <div class="filter-panel__checks">
             {
               areaNameList.map((areaName:string) => (
                       <label class="filter-area__label"><input type="checkbox" name="area-filter" class="filter-area__input" value={areaName} checked>{areaName}</label>
               ))
             }
-          </div>
-          <div class="filter-area__buttons">
-            <button type="button" id="button-areas-check" class="filter-area__button">すべてチェック</button>
-            <button type="button" id="button-areas-discheck" class="filter-area__button">すべて外す</button>
           </div>
         </div>
         <div id="panel-display" class="control-panel display-panel">
@@ -177,7 +180,15 @@ stores.forEach(store => {
     >
       {
         stores.map((store:any) => (
-                <article class="store-item" data-area={areaList[store.area]} data-number={store.acf.store_number} data-open={store.acf.event_start.replace(':','')} data-end={store.acf.event_end.replace(':','')} data-display="true">
+                <article class="store-item"
+                         data-area={areaList[store.area]}
+                         data-number={store.acf.store_number}
+                         data-open={store.acf.event_start.replace(':','')}
+                         data-end={store.acf.event_end.replace(':','')}
+                         data-id={store.id}
+                         data-congestion="0"
+                         data-modified="0"
+                         data-display="true">
                   <a href={`/store/${store.slug}`} class="store-link" data-canceled={store.acf.store_canceled}>
                     <figure class="store-figure">
                       <img src={store.image.url} width="1920" height="1080" alt="" class="store-image" loading="lazy">
@@ -298,6 +309,23 @@ function sortByAttribute(attribute, ascending = true) {
     storeList.appendChild(element);
   });
 }
+
+// congestion=on のときのみ混雑度を表示
+const urlParams = new URLSearchParams(window.location.search);
+const congestionParam = urlParams.get('congestion');
+if (congestionParam === 'on') {
+  // 混雑度取得
+  const res = await fetch(`${ import.meta.env.PUBLIC_API_URL }/congestion`);
+  const posts = await res.json();
+  console.log(posts);
+  const congestionList = document.querySelectorAll('.store-item');
+  congestionList.forEach(elm => {
+    const congestion = posts.find(obj => obj.id === Number(elm.dataset.id));
+    elm.dataset.congestion = congestion.store_congestion ? congestion.store_congestion : 0;
+    elm.dataset.modified = congestion.last_modified ? congestion.last_modified : 0;
+  });
+  // /混雑度取得
+}
 </script>
 
 <style lang="scss">
@@ -341,10 +369,13 @@ function sortByAttribute(attribute, ascending = true) {
   .control-panel {
     grid-area: panel;
     background-color: #fff;
-    padding: var(--space-x5) var(--space-x4) var(--space-x4);
+    padding: var(--space-x5) var(--space-x4) var(--space-x5);
     z-index: 0;
     &.is-active {
       z-index: 1;
+    }
+    &.filter-panel {
+      padding-top: var(--space-x3);
     }
   }
 
@@ -357,6 +388,17 @@ function sortByAttribute(attribute, ascending = true) {
     @media (min-width: 768px) {
       //grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     }
+  }
+  .filter-panel__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-x2);
+    padding-left:  var(--space-x2);
+  }
+  .filter-panel__title {
+    font-size: 110%;
+    margin: 0;
   }
   .filter-panel__checks {
     display: grid;
@@ -390,7 +432,7 @@ function sortByAttribute(attribute, ascending = true) {
   .filter-area__buttons {
     display: flex;
     justify-content: flex-end;
-    margin-top: var(--space-x2);
+    //margin-top: var(--space-x2);
   }
   .filter-area__button {
     padding: var(--space-x2) var(--space-x3);
@@ -419,7 +461,7 @@ function sortByAttribute(attribute, ascending = true) {
     @media (min-width: 576px) {
       grid-template-columns: repeat(2, 1fr);
     }
-    @media (min-width: 768px) {
+    @media (min-width: 1040px) {
       grid-template-columns: repeat(3, 1fr);
     }
     &[data-display-image="false"] {
@@ -448,6 +490,40 @@ function sortByAttribute(attribute, ascending = true) {
     }
     &[data-display-food="false"][data-display-sake="false"][data-display-temp="false"][data-display-time="false"][data-display-seat="false"][data-display-station="false"] .store-link{
       padding-bottom: 0;
+    }
+  }
+  .store-item {
+    position: relative;
+    display: none;
+    &[data-display="true"] {
+      display: block;
+    }
+    &:not([data-congestion="0"]) {
+      &::before,
+      &::after {
+        position: absolute;
+        right: 0;
+        display: inline-block;
+        width: 190px;
+        background-color: rgba(255,255,255,0.8);
+        line-height: 1;
+        z-index: 2;
+        text-align: center;
+      }
+      &::before {
+        height: 30px;
+        top: 0;
+        content: attr(data-congestion);
+        padding: var(--space-x2) var(--space-x1) 0;
+        font-weight: bold;
+      }
+      &::after {
+        top: 30px;
+        content: attr(data-modified)'更新';
+        padding: 0 var(--space-x1) var(--space-x2);
+        background-color: rgba(255,255,255,0.8);
+        font-size: 80%;
+      }
     }
   }
   .store-link {
@@ -491,12 +567,6 @@ function sortByAttribute(attribute, ascending = true) {
       &:hover {
         filter: drop-shadow(0 3px 4px rgba(0,0,0,.2));
       }
-    }
-  }
-  .store-item {
-    display: none;
-    &[data-display="true"] {
-      display: block;
     }
   }
   .store-figure {
