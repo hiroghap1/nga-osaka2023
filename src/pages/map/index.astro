@@ -68,6 +68,25 @@ stores.sort((a, b) => a.acf.store_number - b.acf.store_number);
     // 地図を作成
     map = new google.maps.Map(document.getElementById("store-map-canvas"), mapOptions);
 
+    // ルートを表示するためのディレクションサービスを作成
+    const directionsService = new google.maps.DirectionsService();
+    const directionsRenderer = new google.maps.DirectionsRenderer({ map: map });
+
+    const origin = new google.maps.LatLng(34.760494, 135.520277); // 出発地点
+    const destination = new google.maps.LatLng(34.8008753, 135.469227); // 目的地点
+
+    const request = {
+      origin: origin,
+      destination: destination,
+      travelMode: 'DRIVING', // 交通手段を指定
+    };
+
+    directionsService.route(request, function (result, status) {
+      if (status == 'OK') {
+        directionsRenderer.setDirections(result);
+      }
+    });
+
     // マーカーを追加
     storeList.forEach((store,index) =>{
       store.addEventListener('click',()=>{
@@ -95,7 +114,7 @@ stores.sort((a, b) => a.acf.store_number - b.acf.store_number);
       div.classList.add('map-popup');
       a.classList.add('map-popup__link');
       p.classList.add('map-popup__congestion');
-      if(congestionParam === 'on') p.classList.add('is-congestion');
+      p.classList.add('is-congestion');
       const link = store.querySelector('.store-map-link')
       a.innerHTML = link.innerHTML;
       a.href = link.getAttribute('href');
