@@ -40,22 +40,17 @@ stores.sort((a, b) => a.acf.store_number - b.acf.store_number);
 
   console.log(CENTER_LAT,CENTER_LNG);
 
-  // congestion=on のときのみ混雑度を表示
-  const urlParams = new URLSearchParams(window.location.search);
-  const congestionParam = urlParams.get('congestion');
-  if (congestionParam === 'on') {
-    // 混雑度取得
-    const res = await fetch(`${ import.meta.env.PUBLIC_API_URL }/congestion`);
-    const posts = await res.json();
-    console.log(posts);
-    const congestionList = document.querySelectorAll('.store-map-item');
-    congestionList.forEach(elm => {
-      const congestion = posts.find(obj => obj.id === Number(elm.dataset.id));
-      elm.dataset.congestion = congestion.store_congestion;
-      elm.dataset.modefied = congestion.last_modified;
-    });
-    // /混雑度取得
-  }
+  // 混雑度取得
+  const res = await fetch(`${ import.meta.env.PUBLIC_API_URL }/congestion`);
+  const posts = await res.json();
+  console.log(posts);
+  const congestionList = document.querySelectorAll('.store-map-item');
+  congestionList.forEach(elm => {
+    const congestion = posts.find(obj => obj.id === Number(elm.dataset.id));
+    elm.dataset.congestion = congestion.store_congestion;
+    elm.dataset.modefied = congestion.last_modified;
+  });
+  // /混雑度取得
 
   // 地図の初期化関数
   function initMap() {

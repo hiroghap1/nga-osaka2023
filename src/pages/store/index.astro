@@ -310,22 +310,17 @@ function sortByAttribute(attribute, ascending = true) {
   });
 }
 
-// congestion=on のときのみ混雑度を表示
-const urlParams = new URLSearchParams(window.location.search);
-const congestionParam = urlParams.get('congestion');
-if (congestionParam === 'on') {
-  // 混雑度取得
-  const res = await fetch(`${ import.meta.env.PUBLIC_API_URL }/congestion`);
-  const posts = await res.json();
-  console.log(posts);
-  const congestionList = document.querySelectorAll('.store-item');
-  congestionList.forEach(elm => {
-    const congestion = posts.find(obj => obj.id === Number(elm.dataset.id));
-    elm.dataset.congestion = congestion.store_congestion ? congestion.store_congestion : 0;
-    elm.dataset.modified = congestion.last_modified ? congestion.last_modified : 0;
-  });
-  // /混雑度取得
-}
+// 混雑度取得
+const res = await fetch(`${ import.meta.env.PUBLIC_API_URL }/congestion`);
+const posts = await res.json();
+console.log(posts);
+const congestionList = document.querySelectorAll('.store-item');
+congestionList.forEach(elm => {
+  const congestion = posts.find(obj => obj.id === Number(elm.dataset.id));
+  elm.dataset.congestion = congestion.store_congestion ? congestion.store_congestion : 0;
+  elm.dataset.modified = congestion.last_modified ? congestion.last_modified : 0;
+});
+// /混雑度取得
 </script>
 
 <style lang="scss">
