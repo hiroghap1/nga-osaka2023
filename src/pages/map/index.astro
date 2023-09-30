@@ -72,18 +72,47 @@ stores.sort((a, b) => a.acf.store_number - b.acf.store_number);
     const directionsService = new google.maps.DirectionsService();
     const directionsRenderer = new google.maps.DirectionsRenderer({ map: map });
 
-    const origin = new google.maps.LatLng(34.760494, 135.520277); // 出発地点
-    const destination = new google.maps.LatLng(34.8008753, 135.469227); // 目的地点
+    // 経由地の配列を作成
+    const waypoints = [
+      {
+        location: '業務スーパー TAKENOKO 内本町店',
+        stopover: false,
+      },
+      {
+        location: '吹田郵便局',
+        stopover: false,
+      },
+      {
+        location: '酒麺きっしゃん',
+        stopover: false,
+      },
+      {
+        location: 'やきとりおかげ',
+        stopover: false,
+      },
+      {
+        location: '創作和食 とよ吉',
+        stopover: false,
+      },
+    ];
 
     const request = {
-      origin: origin,
-      destination: destination,
+      origin: '高浜神社',
+      destination: '凡夫 uenosaka',
+      waypoints: waypoints,
       travelMode: 'DRIVING', // 交通手段を指定
     };
 
     directionsService.route(request, function (result, status) {
       if (status == 'OK') {
         directionsRenderer.setDirections(result);
+      }
+    });
+
+    // 出発点と到着点のマーカーを非表示にする
+    directionsRenderer.setOptions({
+      markerOptions: {
+        visible: false,
       }
     });
 
@@ -186,6 +215,7 @@ stores.sort((a, b) => a.acf.store_number - b.acf.store_number);
     }
   }
   initMap();
+
 
 </script>
 <style lang="scss">
