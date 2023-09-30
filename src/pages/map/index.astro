@@ -113,7 +113,8 @@ stores.sort((a, b) => a.acf.store_number - b.acf.store_number);
     directionsRenderer.setOptions({
       markerOptions: {
         visible: false,
-      }
+      },
+      preserveViewport: true,
     });
 
     // マーカーを追加

@@ -141,6 +141,29 @@ stores.forEach(store => {
               ))
             }
           </div>
+          <details class="filter-panel__details">
+            <summary class="filter-panel__summary">提供温度・混雑度</summary>
+            <div class="filter-panel__additional">
+              <div class="filter-panel__header">
+                <p class="filter-panel__title">提供温度</p>
+              </div>
+              <div class="filter-panel__checks">
+                <label class="filter-area__label"><input type="checkbox" name="temp-filter" class="filter-area__input" value="Cold" checked>冷酒</label>
+                <label class="filter-area__label"><input type="checkbox" name="temp-filter" class="filter-area__input" value="Normal" checked>常温</label>
+                <label class="filter-area__label"><input type="checkbox" name="temp-filter" class="filter-area__input" value="Hot" checked>燗酒</label>
+              </div>
+              <div class="filter-panel__header">
+                <p class="filter-panel__title">混雑度</p>
+              </div>
+              <div class="filter-panel__checks">
+                <label class="filter-area__label"><input type="checkbox" name="congestion-filter" class="filter-area__input" value="congestion1" checked>○（余裕あり）</label>
+                <label class="filter-area__label"><input type="checkbox" name="congestion-filter" class="filter-area__input" value="congestion2" checked>△（残席わずか）</label>
+                <label class="filter-area__label"><input type="checkbox" name="congestion-filter" class="filter-area__input" value="congestion3" checked>満席（待ち時間小）</label>
+                <label class="filter-area__label"><input type="checkbox" name="congestion-filter" class="filter-area__input" value="congestion4" checked>満席（待ち時間大）</label>
+                <label class="filter-area__label"><input type="checkbox" name="congestion-filter" class="filter-area__input" value="congestion5" checked>受付終了</label>
+              </div>
+            </div>
+          </details>
         </div>
         <div id="panel-display" class="control-panel display-panel">
           <div class="display-panel__checks">
@@ -168,6 +191,7 @@ stores.forEach(store => {
           </div>
         </div>
       </div>
+      <div class="store-count">85軒中<span id="displayed-count" class="displayed-count">0</span>軒表示</div>
     <div id="store-list" class="store-list"
          data-area={areaNameList.join(',')}
          data-display-image="true"
@@ -177,6 +201,14 @@ stores.forEach(store => {
          data-display-time="true"
          data-display-seat="true"
          data-display-station="true"
+         data-temp-cold="true"
+         data-temp-normal="true"
+         data-temp-hot="true"
+         data-congestion1="true"
+         data-congestion2="true"
+         data-congestion3="true"
+         data-congestion4="true"
+         data-congestion5="true"
     >
       {
         stores.map((store:any) => (
@@ -188,6 +220,7 @@ stores.forEach(store => {
                          data-id={store.id}
                          data-congestion="0"
                          data-modified="0"
+                         data-temp={store.temperature}
                          data-display="true">
                   <a href={`/store/${store.slug}`} class="store-link" data-canceled={store.acf.store_canceled}>
                     <figure class="store-figure">
@@ -214,6 +247,8 @@ stores.forEach(store => {
 
 <script>
 const areaFilters = document.querySelectorAll('[name="area-filter"]');
+const tempFilters = document.querySelectorAll('[name="temp-filter"]');
+const congestionFilters = document.querySelectorAll('[name="congestion-filter"]');
 const displayItems = document.querySelectorAll('[name="display-filter"]');
 const storeList = document.getElementById('store-list');
 const storeItems = document.querySelectorAll('.store-item');
@@ -221,7 +256,6 @@ const buttonAreasCheck = document.getElementById('button-areas-check');
 const buttonAreasDisCheck = document.getElementById('button-areas-discheck');
 const buttonControls = document.querySelectorAll('.control-button');
 const panelControls = document.querySelectorAll('.control-panel');
-console.log(storeList.dataset.area.split(','));
 const areaChecked = [];
 areaFilters.forEach(areaFilter => {
   areaFilter.addEventListener('click', ()=>{
@@ -231,6 +265,26 @@ areaFilters.forEach(areaFilter => {
         }
       });
     console.log(areaFilter.value);
+  });
+});
+tempFilters.forEach(tempFilter => {
+  tempFilter.addEventListener('click', ()=>{
+    const attribute = 'temp' + tempFilter.value;
+    if(tempFilter.checked) {
+      storeList.dataset[attribute] = 'true';
+    } else {
+      storeList.dataset[attribute] = 'false';
+    }
+  });
+});
+congestionFilters.forEach(congestionFilter => {
+  congestionFilter.addEventListener('click', ()=>{
+    const attribute = congestionFilter.value;
+    if(congestionFilter.checked) {
+      storeList.dataset[attribute] = 'true';
+    } else {
+      storeList.dataset[attribute] = 'false';
+    }
   });
 });
 displayItems.forEach(displayItem =>{
@@ -313,7 +367,7 @@ function sortByAttribute(attribute, ascending = true) {
 // 混雑度取得
 const res = await fetch(`${ import.meta.env.PUBLIC_API_URL }/congestion`);
 const posts = await res.json();
-console.log(posts);
+// console.log(posts);
 const congestionList = document.querySelectorAll('.store-item');
 congestionList.forEach(elm => {
   const congestion = posts.find(obj => obj.id === Number(elm.dataset.id));
@@ -321,6 +375,51 @@ congestionList.forEach(elm => {
   elm.dataset.modified = congestion.last_modified ? congestion.last_modified : 0;
 });
 // /混雑度取得
+
+// 表示中件数カウント
+function updateDisplayedCount() {
+  let displayedCount = 0;
+
+  storeItems.forEach((item) => {
+    const itemStyle = window.getComputedStyle(item);
+    console.log(itemStyle);
+    if (itemStyle.display !== 'none') {
+      console.log(displayedCount);
+      displayedCount++;
+    }
+  });
+
+  // 表示中の個数を表示する要素を取得
+  const displayedCountElement = document.getElementById('displayed-count');
+  // displayedCountElement.textContent = String(displayedCount);
+  animateCountChange(displayedCount,displayedCountElement);
+}
+
+// カウントをアニメーションで切り替える関数
+function animateCountChange(newValue,countElement) {
+  let currentValue = parseInt(countElement.textContent, 10);
+  const step = Math.sign(newValue - currentValue); // 増減するステップ
+  const duration = 500; // アニメーションの時間（ミリ秒）
+
+  // アニメーションループ
+  function updateCount() {
+    if (currentValue !== newValue) {
+      currentValue += step;
+      countElement.textContent = currentValue;
+      requestAnimationFrame(updateCount);
+    }
+  }
+
+  // アニメーション開始
+  updateCount();
+}
+
+const observer = new MutationObserver(updateDisplayedCount);
+const config = {attributes: true, subtree: true };
+const target = document.querySelector('.store-list');
+observer.observe(storeList, config);
+window.addEventListener('load', updateDisplayedCount);
+
 </script>
 
 <style lang="scss">
@@ -449,10 +548,18 @@ congestionList.forEach(elm => {
       }
     }
   }
+  .store-count {
+    margin-top: var(--space-x8);
+    text-align: right;
+  }
+  .displayed-count {
+    display: inline-block;
+    margin-left: var(--space-x1);
+    font-size: 120%;
+  }
   .store-list {
     display: grid;
     gap: var(--space-x8) var(--space-x5);
-    margin-top: var(--space-x8);
     @media (min-width: 576px) {
       grid-template-columns: repeat(2, 1fr);
     }
@@ -461,6 +568,12 @@ congestionList.forEach(elm => {
     }
     &[data-display-image="false"] {
       row-gap: var(--space-x5);
+      .store-item {
+        &::before,
+        &::after {
+          display: none;
+        }
+      }
       .store-figure {
         display: none;
       }
@@ -485,6 +598,82 @@ congestionList.forEach(elm => {
     }
     &[data-display-food="false"][data-display-sake="false"][data-display-temp="false"][data-display-time="false"][data-display-seat="false"][data-display-station="false"] .store-link{
       padding-bottom: 0;
+    }
+
+    &[data-congestion1="false"] {
+      &>[data-congestion="○（余裕あり）"] {
+        display: none;
+      }
+      &>[data-congestion="0"] {
+        display: none;
+      }
+    }
+    &[data-congestion2="false"] {
+      &>[data-congestion="△（残席わずか）"] {
+        display: none;
+      }
+      &>[data-congestion="0"] {
+        display: none;
+      }
+    }
+    &[data-congestion3="false"] {
+      &>[data-congestion="満席（待ち時間小）"] {
+        display: none;
+      }
+      &>[data-congestion="0"] {
+        display: none;
+      }
+    }
+    &[data-congestion4="false"] {
+      &>[data-congestion="満席（待ち時間大）"] {
+        display: none;
+      }
+      &>[data-congestion="0"] {
+        display: none;
+      }
+    }
+    &[data-congestion5="false"] {
+      &>[data-congestion="受付終了"] {
+        display: none;
+      }
+      &>[data-congestion="0"] {
+        display: none;
+      }
+    }
+    &[data-temp-cold="false"] {
+      &>[data-temp="冷酒"] {
+        display: none;
+      }
+    }
+    &[data-temp-normal="false"] {
+      &>[data-temp="常温"] {
+        display: none;
+      }
+    }
+    &[data-temp-hot="false"] {
+      &>[data-temp="燗酒"] {
+        display: none;
+      }
+    }
+    &[data-temp-cold="false"][data-temp-normal="false"] {
+      &>[data-temp="冷酒・常温"] {
+        display: none;
+      }
+    }
+    &[data-temp-normal="false"][data-temp-hot="false"] {
+      &>[data-temp="常温・燗酒"] {
+        display: none;
+      }
+    }
+    &[data-temp-cold="false"][data-temp-hot="false"] {
+      &>[data-temp="冷酒・燗酒"] {
+        display: none;
+      }
+    }
+    &[data-temp-cold="false"][data-temp-normal="false"][data-temp-hot="false"] {
+      &>[data-temp="冷酒・常温・燗酒"] {
+        display: none;
+      }
     }
   }
   .store-item {
@@ -625,5 +814,43 @@ congestionList.forEach(elm => {
       }
     }
   }
-
+  .filter-panel__summary {
+    display: inline-flex;
+    align-items: center;
+    margin-top: var(--space-x2);
+    padding: var(--space-x2) var(--space-x3);
+    font-size: 90%;
+    color: #3273F6;
+    border-radius: 3px;
+    transition: background-color .3s ease-out;
+    cursor: pointer;
+    @media (hover: hover) {
+      &:hover {
+        background-color: color.scale(#3273F6, $lightness: 95%);
+      }
+    }
+    &::before {
+      content: '';
+      display: inline-block;
+      width: .75em;
+      height: .5em;
+      margin-right: var(--space-x1);
+      background-color: #3273F6;
+      clip-path: polygon(0 0, 100% 0, 50% 100%);
+      transition: rotate .3s ease-out;
+    }
+  }
+  .filter-panel__details[open] {
+    &>.filter-panel__summary::before {
+      rotate: 180deg;
+    }
+  }
+  .filter-panel__additional {
+    &>.filter-panel__header {
+      margin-top: var(--space-x3);
+    }
+    &>.filter-panel__checks+.filter-panel__header {
+      margin-top: var(--space-x5);
+    }
+  }
 </style>
