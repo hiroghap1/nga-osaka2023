@@ -146,6 +146,10 @@ stores.forEach(store => {
             <div class="filter-panel__additional">
               <div class="filter-panel__header">
                 <p class="filter-panel__title">提供温度</p>
+                <div class="filter-area__buttons">
+                  <button type="button" id="button-temps-check" class="filter-area__button">すべてチェック</button>
+                  <button type="button" id="button-temps-discheck" class="filter-area__button">すべて外す</button>
+                </div>
               </div>
               <div class="filter-panel__checks">
                 <label class="filter-area__label"><input type="checkbox" name="temp-filter" class="filter-area__input" value="Cold" checked>冷酒</label>
@@ -154,8 +158,12 @@ stores.forEach(store => {
               </div>
               <div class="filter-panel__header">
                 <p class="filter-panel__title">混雑度</p>
+                <div class="filter-area__buttons">
+                  <button type="button" id="button-congestions-check" class="filter-area__button">すべてチェック</button>
+                  <button type="button" id="button-congestions-discheck" class="filter-area__button">すべて外す</button>
+                </div>
               </div>
-              <div class="filter-panel__checks">
+              <div class="filter-panel__checks --congestion">
                 <label class="filter-area__label"><input type="checkbox" name="congestion-filter" class="filter-area__input" value="congestion1" checked>○（余裕あり）</label>
                 <label class="filter-area__label"><input type="checkbox" name="congestion-filter" class="filter-area__input" value="congestion2" checked>△（残席わずか）</label>
                 <label class="filter-area__label"><input type="checkbox" name="congestion-filter" class="filter-area__input" value="congestion3" checked>満席（待ち時間小）</label>
@@ -254,6 +262,10 @@ const storeList = document.getElementById('store-list');
 const storeItems = document.querySelectorAll('.store-item');
 const buttonAreasCheck = document.getElementById('button-areas-check');
 const buttonAreasDisCheck = document.getElementById('button-areas-discheck');
+const buttonTempsCheck = document.getElementById('button-temps-check');
+const buttonTempsDisCheck = document.getElementById('button-temps-discheck');
+const buttonCongestionsCheck = document.getElementById('button-congestions-check');
+const buttonCongestionsDisCheck = document.getElementById('button-congestions-discheck');
 const buttonControls = document.querySelectorAll('.control-button');
 const panelControls = document.querySelectorAll('.control-panel');
 const areaChecked = [];
@@ -312,6 +324,40 @@ buttonAreasDisCheck.addEventListener('click',()=> {
   storeItems.forEach(storeItem =>{
     storeItem.dataset.display = false;
   });
+});
+buttonTempsCheck.addEventListener('click',()=> {
+  tempFilters.forEach(tempFilter => {
+    tempFilter.checked = true;
+  });
+  storeList.dataset.tempCold = "true";
+  storeList.dataset.tempNormal = "true";
+  storeList.dataset.tempHot = "true";
+});
+buttonTempsDisCheck.addEventListener('click',()=> {
+  tempFilters.forEach(tempFilter => {
+    tempFilter.checked = false;
+  });
+  storeList.dataset.tempCold = "false";
+  storeList.dataset.tempNormal = "false";
+  storeList.dataset.tempHot = "false";
+});
+buttonCongestionsCheck.addEventListener('click',()=> {
+  congestionFilters.forEach(congestionFilter => {
+    congestionFilter.checked = true;
+  });
+  for(let i = 1; i < 6; i++) {
+    const dataName = 'congestion' + i;
+    storeList.setAttribute(`data-${dataName}`, "true");
+  }
+});
+buttonCongestionsDisCheck.addEventListener('click',()=> {
+  congestionFilters.forEach(congestionFilter => {
+    congestionFilter.checked = false;
+  });
+  for(let i = 1; i < 6; i++) {
+    const dataName = 'Congestion' + i;
+    storeList.setAttribute(`data-${dataName}`, "false");
+  }
 });
 buttonControls.forEach(button =>{
   button.addEventListener('click',()=>{
@@ -382,9 +428,7 @@ function updateDisplayedCount() {
 
   storeItems.forEach((item) => {
     const itemStyle = window.getComputedStyle(item);
-    console.log(itemStyle);
     if (itemStyle.display !== 'none') {
-      console.log(displayedCount);
       displayedCount++;
     }
   });
@@ -502,6 +546,15 @@ window.addEventListener('load', updateDisplayedCount);
     }
     @media (min-width: 768px) {
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+    &.--congestion {
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      @media (min-width: 480px) {
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      }
+      @media (min-width: 768px) {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      }
     }
   }
   .display-panel__checks {
@@ -838,6 +891,9 @@ window.addEventListener('load', updateDisplayedCount);
       background-color: #3273F6;
       clip-path: polygon(0 0, 100% 0, 50% 100%);
       transition: rotate .3s ease-out;
+    }
+    &::-webkit-details-marker {
+      display: none;
     }
   }
   .filter-panel__details[open] {
