@@ -217,6 +217,7 @@ store.acf.sake_temp.forEach(temp => {
   }
   temperature.push(`<span class="sake-temp ${className}">${temp.label}</span>`);
 });
+const postLink = `https://twitter.com/intent/tweet?url=https://nga-osaka.com/store/${store.slug}%0a&text=${store.title.rendered}%0a@ngaosaka1001%0a&hashtags=日本酒ゴーアラウンド大阪`;
 ---
 
 <Layout title={ store.title.rendered }>
@@ -224,6 +225,7 @@ store.acf.sake_temp.forEach(temp => {
     <div class="store-visual store-figure">
       <img src="/assets/images/tokkuri-tokyo.png" class="store-visual__tokkuri-image" width="721" height="1249" alt="">
       <img src={eyeCatch.source_url} alt={store.acf.store_name} class="store-visual__image" width={eyeCatch.media_details.width} height={eyeCatch.media_details.height} decoding="async">
+      <a href={postLink} class="post-icon" target="_blank"><img src="/assets/images/post.png" class="post-icon__image" alt="ポストする？" width="784" height="948" decoding="async"></a>
     </div>
     <div class="container">
       <h1 transition:name="title"><span set:html={store.acf.store_number} />{store.title.rendered}</h1>
@@ -774,6 +776,41 @@ store.acf.sake_temp.forEach(temp => {
       }
       @media (min-width: 1040px) {
         grid-template-columns: repeat(3, 1fr);
+      }
+    }
+    .post-icon {
+      position: relative;
+      display: inline-block;
+      align-self: start;
+      justify-self: end;
+      width: 100px;
+      margin-right: var(--space-x3);
+      margin-top: var(--space-x3);
+      z-index: 2;
+      transform-origin: right bottom;
+      transition: .3s rotate ease-out;
+      &:hover {
+        rotate: 7deg;
+      }
+      @media (min-width: 576px) {
+        width: 120px;
+      }
+      @media (min-width: 1040px) {
+        width: 200px;
+        margin-right: var(--space-x5);
+        margin-top: var(--space-x5);
+      }
+      &::after {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: -2px;
+        content: '';
+        width: 80%;
+        height: 6px;
+        margin-inline: auto;
+        background-image: radial-gradient(rgba(0,0,0,.15), transparent);
+        border-radius: 50%;
       }
     }
   </style>
