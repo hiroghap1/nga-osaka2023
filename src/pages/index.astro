@@ -104,7 +104,7 @@ const ngaList = [
 					<ul class="store-list" role="list">
 						{
 							afterList.map((store:any) => (
-								<li class="store-item" data-title={store.title.rendered} data-taste={store.acf.sake_taste} data-flavor={store.acf.sake_flavor} data-number={store.acf.store_number}><a href={`/store/${store.slug}`} class="store-link" data-canceled={store.acf.store_canceled}><span class="store-number">{store.acf.store_number}</span>{store.title.rendered}</a></li>
+								<li class="store-item--after" data-title={store.title.rendered} data-taste={store.acf.sake_taste} data-flavor={store.acf.sake_flavor} data-number={store.acf.store_number}><a href={`/store/${store.slug}`} class="store-link" data-canceled={store.acf.store_canceled}><span class="store-number">{store.acf.store_number}</span>{store.title.rendered}</a></li>
 							))
 						}
 					</ul>
@@ -178,13 +178,13 @@ const ngaList = [
 					</h3>
 					<div class="box-contents__inner">
 						<ul>
-							<li>2023.10.04 アフターアラウンドを公開しました。</li>
-							<li>2023.09.23 店舗地図を公開しました。</li>
-							<li>2023.09.20 全国の日本酒ゴーアラウンドへのリンクを設置しました。</li>
-							<li>2023.08.30 「（39）小料理屋 en to jyo」は出店中止となりました。</li>
-							<li>2023.08.27 参加店舗の画像を公開しました。振る舞い酒の都道府県を修正しました。</li>
-							<li>2023.08.25 参加店舗ページを公開しました。</li>
-							<li>2023.08.13 日本酒ゴーアラウンド2023 大阪公式サイトオープンしました。</li>
+							<li class="latest-news__item"><time>2023.10.04</time>アフターアラウンドを公開しました。</li>
+							<li class="latest-news__item"><time>2023.09.23</time>店舗地図を公開しました。</li>
+							<li class="latest-news__item"><time>2023.09.20</time>全国の日本酒ゴーアラウンドへのリンクを設置しました。</li>
+							<li class="latest-news__item"><time>2023.08.30</time>「（39）小料理屋 en to jyo」は出店中止となりました。</li>
+							<li class="latest-news__item"><time>2023.08.27</time>参加店舗の画像を公開しました。振る舞い酒の都道府県を修正しました。</li>
+							<li class="latest-news__item"><time>2023.08.25</time>参加店舗ページを公開しました。</li>
+							<li class="latest-news__item"><time>2023.08.13</time>日本酒ゴーアラウンド2023 大阪公式サイトオープンしました。</li>
 						</ul>
 					</div>
 					<svg width="100%" height="100%" class="box-contents__border">
@@ -1544,6 +1544,19 @@ Basic Modal Styles
 		@media (min-width: 992px) {
 			grid-template-columns: repeat(2,1fr);
 		}
+	}
+}
+.latest-news__item {
+	line-height: 1.3;
+	&+.latest-news__item {
+		margin-top: var(--space-x4);
+	}
+	&>time{
+		display: block;
+	}
+	@media (min-width: 768px) {
+		display: flex;
+		gap: var(--space-x6);
 	}
 }
 </style>
