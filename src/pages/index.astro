@@ -6,7 +6,13 @@ import { Picture } from '@astrojs/image/components';
 const res = await fetch(`${import.meta.env.PUBLIC_API_URL}/store?per_page=100&order=asc`);
 const stores = await res.json();
 stores.sort((a, b) => a.acf.store_number - b.acf.store_number);
-// console.log(stores);
+
+const afterList = stores.filter(store => {
+		if(typeof store.acf.afoter_around === 'object') {
+			return store.acf.afoter_around[0] === '参加';
+		};
+});
+// const afterList = stores.filter(store => store.acf.afoter_around === '参加');
 
 const ngaList = [
 	{name:'札幌',slug: 'sapporo',url: 'https://www.instagram.com/nga_sapporo/'},
@@ -89,6 +95,20 @@ const ngaList = [
 			</h2>
 		</div>
 		<section class="section section-introduction">
+				<div class="after-around">
+					<h2><span class="sub-title">お祭りは終わらない…！<br>ゴーアラウンドのあとは</span>
+						アフターアラウンド！</h2>
+					<p>バッジを提示すると特典がある、アフターアラウンド！
+						特典は各参加店舗の詳細ページを御覧ください！</p>
+					<h3>アフターアラウンド参加店舗</h3>
+					<ul class="store-list" role="list">
+						{
+							afterList.map((store:any) => (
+								<li class="store-item" data-title={store.title.rendered} data-taste={store.acf.sake_taste} data-flavor={store.acf.sake_flavor} data-number={store.acf.store_number}><a href={`/store/${store.slug}`} class="store-link" data-canceled={store.acf.store_canceled}><span class="store-number">{store.acf.store_number}</span>{store.title.rendered}</a></li>
+							))
+						}
+					</ul>
+				</div>
 			<div class="introductoin-lead">
 				<h2>さかずきんバッジを<br>
 				500円でGet!!<br>
@@ -158,6 +178,7 @@ const ngaList = [
 					</h3>
 					<div class="box-contents__inner">
 						<ul>
+							<li>2023.10.04 アフターアラウンドを公開しました。</li>
 							<li>2023.09.23 店舗地図を公開しました。</li>
 							<li>2023.09.20 全国の日本酒ゴーアラウンドへのリンクを設置しました。</li>
 							<li>2023.08.30 「（39）小料理屋 en to jyo」は出店中止となりました。</li>
@@ -1484,5 +1505,45 @@ Basic Modal Styles
 @keyframes fadeOut {
 	from {opacity: 1}
 	to {opacity: 0}
+}
+.after-around {
+	max-width: 720px;
+	margin: var(--space-x4) auto;
+	padding: 0 var(--space-x6);
+	border: 2px solid var(--color-sub-accent);
+	background-color: rgba(255,255,255,0.4);
+	&>h2 {
+		width: fit-content;
+		margin: 0 auto;
+		padding:  var(--space-x2) var(--space-x4);
+		line-height: 1.4;
+		text-align: center;
+		background-image: linear-gradient(color.scale(#1D2A82, $lightness: 95%),color.scale(#1D2A82, $lightness: 90%));
+		border-bottom: 2px solid var(--color-sub-accent);
+		translate: 0 -50%;
+		&>.sub-title {
+			font-size: 16px;
+			display: block;
+			&>br {
+				@media (min-width: 768px) {
+					display: none;
+				}
+			}
+		}
+		&+p {
+			margin-top: calc(var(--space-x3) * -1);
+		}
+	}
+	&>h3 {
+		padding-left: var(--space-x2);
+		border-left: 3px solid var(--color-sub-accent);
+	}
+	&>.store-list {
+		margin-bottom: 0;
+		margin-inline: calc(var(--space-x6) * -1);
+		@media (min-width: 992px) {
+			grid-template-columns: repeat(2,1fr);
+		}
+	}
 }
 </style>
