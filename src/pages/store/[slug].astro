@@ -180,7 +180,7 @@ const instagram = store.acf.instagram_url ? `<li><a href="${store.acf.instagram_
 const snsList = (facebook || twitter || instagram) ? `<ul>${facebook + twitter + instagram}</ul>` : '';
 const googleMapSrc = store.acf.googlemap_fix
   ? store.acf.googlemap_fix
-  : `<iframe width="600" height="450" class="googlemap" src="https://maps.google.co.jp/maps?output=embed&q=${store.title.rendered}&z=16"></iframe>`;
+  : `<iframe width="600" height="450" class="googlemap" src="https://maps.google.co.jp/maps?output=embed&q=${store.acf.store_name}&z=16"></iframe>`;
 
 const notFoundImage1 = 'https://data.nga-osaka.com/2023/wp-content/uploads/2023/08/preparation-image1-1.jpg';
 const storeImage1Url = store.acf.store_image1 ? store.acf.store_image1.url : notFoundImage1;
@@ -224,7 +224,7 @@ const postLink = `https://twitter.com/intent/tweet?url=https://nga-osaka.com/sto
 
 
 <Layout title={ store.title.rendered }>
-  <main data-canceled={store.acf.store_canceled}>
+  <main data-canceled={store.acf.store_canceled}>q
     <div class="store-visual store-figure">
       <img src="/assets/images/tokkuri-tokyo.png" class="store-visual__tokkuri-image" width="721" height="1249" alt="">
       <img src={eyeCatch.source_url} alt={store.acf.store_name} class="store-visual__image" width={eyeCatch.media_details.width} height={eyeCatch.media_details.height} decoding="async">
