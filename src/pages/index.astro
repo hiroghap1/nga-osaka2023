@@ -14,6 +14,17 @@ const afterList = stores.filter(store => {
 });
 // const afterList = stores.filter(store => store.acf.afoter_around === '参加');
 
+const resLiquorShop = await fetch(`${import.meta.env.PUBLIC_API_URL}/liquor-shop?per_page=100&order=asc`);
+const liquorShop = await resLiquorShop.json();
+liquorShop.sort((a, b) => a.acf['liquor-shop_number'] - b.acf['liquor-shop_number']);
+// console.log(liquorShop);
+const afterliquorShopList = liquorShop.filter(store => {
+	if(typeof store.acf.after_around === 'object') {
+		return store.acf.after_around[0] === '参加';
+	};
+});
+
+
 const ngaList = [
 	{name:'札幌',slug: 'sapporo',url: 'https://www.instagram.com/nga_sapporo/'},
 	{name:'仙台',slug: 'sendai',url: 'https://www.instagram.com/nga_sendai/'},
@@ -105,6 +116,13 @@ const ngaList = [
 						{
 							afterList.map((store:any) => (
 								<li class="store-item--after" data-title={store.title.rendered} data-taste={store.acf.sake_taste} data-flavor={store.acf.sake_flavor} data-number={store.acf.store_number}><a href={`/store/${store.slug}`} class="store-link" data-canceled={store.acf.store_canceled}><span class="store-number">{store.acf.store_number}</span>{store.title.rendered}</a></li>
+							))
+						}
+					</ul>
+					<ul class="store-list" role="list">
+						{
+							afterliquorShopList.map((store:any) => (
+								<li class="store-item--after" data-title={store.title.rendered}><a href={`/liquor-shop/${store.slug}`} class="store-link"><span class="store-number --liquor-shop">{store.acf['liquor-shop_number']}</span>{store.title.rendered}</a></li>
 							))
 						}
 					</ul>
@@ -1061,6 +1079,10 @@ const ngaList = [
 		@media (min-width: 992px) {
 			grid-template-columns: repeat(3, 1fr);
 		}
+		&+.store-list {
+			margin-top: 0;
+			padding-top: 0;
+		}
 	}
 	.store-link {
 		display: flex;
@@ -1120,6 +1142,9 @@ const ngaList = [
 		color: white;
 		border-radius: 50%;
 		background-color: #1D2A82;
+		&.--liquor-shop {
+			background-color: var(--color-secondary);
+		}
 	}
 	.section-ngaList {
 		overflow-x: hidden;
@@ -1559,4 +1584,5 @@ Basic Modal Styles
 		gap: var(--space-x6);
 	}
 }
+
 </style>
