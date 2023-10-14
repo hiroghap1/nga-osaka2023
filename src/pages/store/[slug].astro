@@ -791,6 +791,10 @@ const postLink = `https://twitter.com/intent/tweet?url=https://nga-osaka.com/sto
       transition: .3s rotate ease-out;
       &:hover {
         rotate: 7deg;
+        &::after {
+          rotate: -7deg;
+          scale: .9;
+        }
       }
       @media (min-width: 576px) {
         width: 120px;
@@ -811,6 +815,8 @@ const postLink = `https://twitter.com/intent/tweet?url=https://nga-osaka.com/sto
         margin-inline: auto;
         background-image: radial-gradient(rgba(0,0,0,.15), transparent);
         border-radius: 50%;
+        transform-origin: right center;
+        transition: .3s rotate ease-out, .3s scale ease-out;
       }
     }
   </style>
